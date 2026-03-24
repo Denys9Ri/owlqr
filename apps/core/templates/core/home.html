@@ -1,1 +1,179 @@
+{% extends 'base.html' %}
+{% load i18n %}
 
+{% block title %}{% trans "Головна" %}{% endblock %}
+{% block meta_description %}{% trans "OwlQR — безкоштовний генератор QR кодів. Створіть QR код за секунди." %}{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="eyebrow">{% trans "Розумний генератор QR-кодів" %}</div>
+    <h1 class="hero-title">
+      {% trans "Створіть свій" %}<br>
+      <em>{% trans "QR-код" %}</em><br>
+      {% trans "за секунди" %}
+    </h1>
+    <p class="hero-sub">
+      {% trans "Безкоштовно для базових кодів. Преміум дизайн — для тих хто хоче виділятись." %}
+    </p>
+    <a href="{% url 'qr_generator:generator' %}" class="btn btn-gold btn-lg">
+      {% trans "Створити QR код" %}
+    </a>
+  </div>
+
+  <div class="hero-right">
+    <svg width="220" height="220" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="200" fill="#fff" rx="4"/>
+      <rect x="10" y="10" width="60" height="60" fill="#1a1612" rx="3"/>
+      <rect x="16" y="16" width="48" height="48" fill="#fff" rx="2"/>
+      <rect x="22" y="22" width="36" height="36" fill="#1a1612" rx="1"/>
+      <rect x="130" y="10" width="60" height="60" fill="#1a1612" rx="3"/>
+      <rect x="136" y="16" width="48" height="48" fill="#fff" rx="2"/>
+      <rect x="142" y="22" width="36" height="36" fill="#1a1612" rx="1"/>
+      <rect x="10" y="130" width="60" height="60" fill="#1a1612" rx="3"/>
+      <rect x="16" y="136" width="48" height="48" fill="#fff" rx="2"/>
+      <rect x="22" y="142" width="36" height="36" fill="#1a1612" rx="1"/>
+      <rect x="80" y="10" width="8" height="8" fill="#1a1612"/>
+      <rect x="96" y="10" width="8" height="8" fill="#1a1612"/>
+      <rect x="88" y="18" width="8" height="8" fill="#1a1612"/>
+      <rect x="80" y="26" width="8" height="8" fill="#1a1612"/>
+      <rect x="96" y="26" width="8" height="8" fill="#1a1612"/>
+      <rect x="10" y="80" width="8" height="8" fill="#1a1612"/>
+      <rect x="26" y="80" width="8" height="8" fill="#1a1612"/>
+      <rect x="18" y="88" width="8" height="8" fill="#1a1612"/>
+      <rect x="10" y="96" width="8" height="8" fill="#1a1612"/>
+      <rect x="26" y="96" width="8" height="8" fill="#1a1612"/>
+      <rect x="18" y="104" width="8" height="8" fill="#1a1612"/>
+      <rect x="10" y="112" width="8" height="8" fill="#1a1612"/>
+      <rect x="130" y="80" width="8" height="8" fill="#1a1612"/>
+      <rect x="146" y="80" width="8" height="8" fill="#1a1612"/>
+      <rect x="162" y="80" width="8" height="8" fill="#1a1612"/>
+      <rect x="138" y="88" width="8" height="8" fill="#1a1612"/>
+      <rect x="154" y="88" width="8" height="8" fill="#1a1612"/>
+      <rect x="130" y="96" width="8" height="8" fill="#1a1612"/>
+      <rect x="162" y="96" width="8" height="8" fill="#1a1612"/>
+      <rect x="80" y="130" width="8" height="8" fill="#1a1612"/>
+      <rect x="96" y="130" width="8" height="8" fill="#1a1612"/>
+      <rect x="112" y="130" width="8" height="8" fill="#1a1612"/>
+      <rect x="88" y="138" width="8" height="8" fill="#1a1612"/>
+      <rect x="104" y="138" width="8" height="8" fill="#1a1612"/>
+      <rect x="80" y="146" width="8" height="8" fill="#1a1612"/>
+      <rect x="112" y="146" width="8" height="8" fill="#1a1612"/>
+      <rect x="96" y="154" width="8" height="8" fill="#1a1612"/>
+      <rect x="80" y="162" width="8" height="8" fill="#1a1612"/>
+      <rect x="112" y="162" width="8" height="8" fill="#1a1612"/>
+      <rect x="76" y="76" width="48" height="48" fill="#fff" rx="2"/>
+      <rect x="80" y="80" width="40" height="40" fill="#FDFAF5" rx="2"/>
+      <ellipse cx="100" cy="97" rx="16" ry="14" fill="#B8962E" opacity="0.15"/>
+      <ellipse cx="93" cy="95" rx="6" ry="7" fill="#1a1612" opacity="0.9"/>
+      <ellipse cx="107" cy="95" rx="6" ry="7" fill="#1a1612" opacity="0.9"/>
+      <ellipse cx="93" cy="94" rx="3" ry="3.5" fill="#fff"/>
+      <ellipse cx="107" cy="94" rx="3" ry="3.5" fill="#fff"/>
+      <ellipse cx="94" cy="93" rx="1.5" ry="1.5" fill="#1a1612"/>
+      <ellipse cx="108" cy="93" rx="1.5" ry="1.5" fill="#1a1612"/>
+      <polygon points="100,99 97,103 103,103" fill="#B8962E"/>
+      <path d="M86,88 Q93,84 100,87 Q107,84 114,88" stroke="#1a1612" stroke-width="1.5" fill="none"/>
+      <path d="M90,106 Q100,112 110,106" stroke="#B8962E" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- МОЖЛИВОСТІ -->
+<div class="section section-center">
+  <div class="section-eyebrow">{% trans "Можливості" %}</div>
+  <h2 class="section-title">{% trans "Що можна створити" %}</h2>
+  <p class="section-sub mb-32">{% trans "Від простого чорно-білого до брендованого QR з логотипом" %}</p>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="feature-icon">▣</div>
+      <h3 class="feature-title">{% trans "Звичайний QR" %}</h3>
+      <p class="feature-sub">{% trans "URL, текст, email, телефон" %}</p>
+      <span class="badge badge-free">{% trans "Безкоштовно" %}</span>
+    </div>
+    <div class="card">
+      <div class="feature-icon" style="color: var(--gold);">◈</div>
+      <h3 class="feature-title">{% trans "Кольоровий QR" %}</h3>
+      <p class="feature-sub">{% trans "Власні кольори та стилі" %}</p>
+      <span class="badge badge-gold">Pro</span>
+    </div>
+    <div class="card">
+      <div class="feature-icon" style="color: var(--gold);">◉</div>
+      <h3 class="feature-title">{% trans "QR з логотипом" %}</h3>
+      <p class="feature-sub">{% trans "Завантажте свій логотип" %}</p>
+      <span class="badge badge-gold">Pro</span>
+    </div>
+    <div class="card">
+      <div class="feature-icon" style="color: var(--gold);">⟳</div>
+      <h3 class="feature-title">{% trans "Динамічний QR" %}</h3>
+      <p class="feature-sub">{% trans "Змінюйте посилання без нового QR" %}</p>
+      <span class="badge badge-gold">Pro</span>
+    </div>
+  </div>
+</div>
+
+<!-- ТИПИ QR -->
+<div class="section-sm" style="background: var(--bg-secondary); padding: 48px 24px;">
+  <div class="section section-center" style="padding: 0;">
+    <div class="section-eyebrow">{% trans "Типи" %}</div>
+    <h2 class="section-title mb-32">{% trans "Для чого можна використати" %}</h2>
+    <div class="grid-3">
+      {% for icon, label in qr_types %}
+      <div class="type-card">
+        <span class="type-icon">{{ icon }}</span>
+        <span class="type-label">{{ label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ТАРИФИ -->
+<div class="section section-center">
+  <div class="section-eyebrow">{% trans "Тарифи" %}</div>
+  <h2 class="section-title">{% trans "Оберіть свій план" %}</h2>
+  <p class="section-sub mb-32">{% trans "Починайте безкоштовно. Переходьте на Pro коли будете готові." %}</p>
+
+  <div class="pricing-grid">
+    <div class="plan-card">
+      <div class="plan-tier">Free</div>
+      <div class="plan-price">$<sup></sup>0</div>
+      <div class="plan-period">{% trans "назавжди" %}</div>
+      <ul class="plan-features">
+        <li>{% trans "Базовий QR код" %}</li>
+        <li>{% trans "PNG завантаження" %}</li>
+        <li>{% trans "URL, текст, email, телефон" %}</li>
+        <li class="off">{% trans "Кольори та логотип" %}</li>
+        <li class="off">{% trans "Динамічний QR" %}</li>
+        <li class="off">{% trans "Статистика сканувань" %}</li>
+      </ul>
+      <a href="{% url 'qr_generator:generator' %}" class="btn btn-outline btn-full">
+        {% trans "Почати безкоштовно" %}
+      </a>
+    </div>
+
+    <div class="plan-card featured">
+      <div class="plan-badge">{% trans "Популярний" %}</div>
+      <div class="plan-tier">Pro</div>
+      <div class="plan-price"><sup>$</sup>X</div>
+      <div class="plan-period">{% trans "на місяць" %}</div>
+      <ul class="plan-features">
+        <li>{% trans "Все з Free" %}</li>
+        <li>{% trans "Кольори + логотип" %}</li>
+        <li>{% trans "Стилі QR (квадрат, круглий, крапки)" %}</li>
+        <li>{% trans "SVG та PNG експорт" %}</li>
+        <li>{% trans "Динамічний QR" %}</li>
+        <li>{% trans "Статистика сканувань" %}</li>
+      </ul>
+      <a href="{% url 'payments:pricing' %}" class="btn btn-gold btn-full">
+        {% trans "Спробувати Pro" %}
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
