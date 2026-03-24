@@ -935,3 +935,56 @@ input, select, textarea { font-family: var(--font-sans); }
 
   .auth-card { padding: 28px 20px; }
 }
+
+/* ─── TERMS / PRIVACY ─────────────────────────────────── */
+.terms-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.terms-section {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.terms-section:last-child { border-bottom: none; }
+
+.terms-h2 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.terms-section p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.terms-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.terms-list li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding-left: 16px;
+  position: relative;
+}
+
+.terms-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 12px;
+}
