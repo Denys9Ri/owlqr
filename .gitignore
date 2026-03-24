@@ -1,1 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
 
+# Django
+*.log
+db.sqlite3
+media/
+
+# Середовище
+.env
+venv/
+env/
+
+# Static (генерується автоматично)
+staticfiles/
+
+# OS
+.DS_Store
+Thumbs.db
