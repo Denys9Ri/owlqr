@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Мої QR коди" %}{% endblock %}
+
+{% block content %}
+<div class="section" style="max-width: 900px;">
+
+  <div style="display: flex; align-items: center;
+              justify-content: space-between; margin-bottom: 32px;">
+    <div>
+      <div class="section-eyebrow">{% trans "Кабінет" %}</div>
+      <h1 class="section-title" style="margin: 0;">{% trans "Мої QR коди" %}</h1>
+    </div>
+    <a href="{% url 'qr_generator:generator' %}" class="btn btn-gold">
+      + {% trans "Новий QR" %}
+    </a>
+  </div>
+
+  {% if qr_codes %}
+  <div class="qr-list">
+    {% for qr in qr_codes %}
+    <div class="qr-list-item">
+
+      <div class="qr-list-info">
+        <div class="qr-list-title">
+          {{ qr.title|default:qr.get_qr_type_display }}
+          {% if qr.is_dynamic %}
+            <span class="badge badge-gold">{% trans "Динамічний" %}</span>
+          {% endif %}
+        </div>
+        <div class="qr-list-content">{{ qr.content|truncatechars:60 }}</div>
+        <div class="qr-list-meta">
+          <span>{{ qr.created_at|date:"d.m.Y" }}</span>
+          {% if qr.is_dynamic %}
+            <span>👁 {{ qr.scan_count }} {% trans "сканувань" %}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="qr-list-actions">
+        <a href="{% url 'qr_generator:download' qr.id %}"
+           class="btn btn-outline" style="padding: 8px 14px; font-size: 12px;">
+          ↓ PNG
+        </a>
+        {% if qr.is_dynamic %}
+        <a href="{% url 'qr_generator:edit_dynamic' qr.id %}"
+           class="btn btn-secondary" style="padding: 8px 14px; font-size: 12px;">
+          ✎ {% trans "Змінити URL" %}
+        </a>
+        {% endif %}
+        <form method="post" action="{% url 'qr_generator:delete' qr.id %}"
+              onsubmit="return confirm('{% trans "Видалити QR код?" %}')">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"
+                  style="padding: 8px 14px; font-size: 12px;">
+            ✕
+          </button>
+        </form>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">▣</div>
+    <h2>{% trans "У вас ще немає QR кодів" %}</h2>
+    <p>{% trans "Створіть перший QR код прямо зараз" %}</p>
+    <a href="{% url 'qr_generator:generator' %}" class="btn btn-gold btn-lg">
+      {% trans "Створити QR код" %}
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
