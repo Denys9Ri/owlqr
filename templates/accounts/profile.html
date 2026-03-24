@@ -1,1 +1,112 @@
+{% extends 'base.html' %}
+{% load i18n %}
 
+{% block title %}{% trans "Профіль" %}{% endblock %}
+
+{% block content %}
+<div class="section" style="max-width: 800px;">
+
+  <div class="section-eyebrow">{% trans "Акаунт" %}</div>
+  <h1 class="section-title">{{ user.full_name }}</h1>
+
+  <div class="grid-2" style="margin-top: 32px; align-items: start;">
+
+    <!-- Дані профілю -->
+    <div class="card" style="padding: 28px;">
+      <h2 class="card-title">{% trans "Особисті дані" %}</h2>
+      <form method="post" style="margin-top: 20px;">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>{% trans "Ім'я" %}</label>
+          <input type="text" name="first_name" class="form-control"
+                 value="{{ user.first_name }}">
+        </div>
+        <div class="form-group">
+          <label>{% trans "Прізвище" %}</label>
+          <input type="text" name="last_name" class="form-control"
+                 value="{{ user.last_name }}">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="form-control"
+                 value="{{ user.email }}" disabled>
+        </div>
+        <button type="submit" class="btn btn-gold">
+          {% trans "Зберегти" %}
+        </button>
+      </form>
+    </div>
+
+    <!-- Підписка -->
+    <div>
+      <div class="card card-gold" style="padding: 28px; margin-bottom: 16px;">
+        <h2 class="card-title">{% trans "Підписка" %}</h2>
+        <div style="margin-top: 16px;">
+          {% if user.is_premium %}
+            <div class="profile-plan-active">
+              <span class="badge badge-gold">PRO</span>
+              <p style="margin-top: 12px; font-size: 13px; color: var(--text-secondary);">
+                {% if user.subscription.expires_at %}
+                  {% trans "Активна до:" %}
+                  <strong>{{ user.subscription.expires_at|date:"d.m.Y" }}</strong>
+                {% endif %}
+              </p>
+              <div style="margin-top: 16px;">
+                <a href="{% url 'payments:cancel_subscription' %}"
+                   class="btn btn-secondary"
+                   onclick="return confirm('{% trans "Скасувати підписку?" %}')">
+                  {% trans "Скасувати підписку" %}
+                </a>
+              </div>
+            </div>
+          {% else %}
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              {% trans "У вас безкоштовний план. Перейдіть на Pro щоб отримати більше можливостей." %}
+            </p>
+            <a href="{% url 'payments:pricing' %}" class="btn btn-gold">
+              {% trans "Перейти на Pro" %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Статистика -->
+      <div class="card" style="padding: 28px;">
+        <h2 class="card-title">{% trans "Статистика" %}</h2>
+        <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <div class="stat-row">
+            <span class="stat-label">{% trans "QR кодів створено" %}</span>
+            <span class="stat-value">{{ user.qr_codes.count }}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">{% trans "Всього сканувань" %}</span>
+            <span class="stat-value">
+              {{ user.qr_codes.all|length }}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">{% trans "Акаунт створено" %}</span>
+            <span class="stat-value">{{ user.created_at|date:"d.m.Y" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- QR коди -->
+  <div style="margin-top: 32px;">
+    <div style="display: flex; align-items: center;
+                justify-content: space-between; margin-bottom: 20px;">
+      <h2 class="section-title" style="margin: 0;">{% trans "Мої QR коди" %}</h2>
+      <a href="{% url 'qr_generator:generator' %}" class="btn btn-gold">
+        + {% trans "Новий QR" %}
+      </a>
+    </div>
+    <a href="{% url 'qr_generator:my_qr_codes' %}" class="btn btn-outline">
+      {% trans "Переглянути всі QR коди" %} →
+    </a>
+  </div>
+
+</div>
+{% endblock %}
