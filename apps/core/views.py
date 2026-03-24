@@ -3,10 +3,18 @@ from django.utils.translation import gettext_lazy as _
 
 
 def home_view(request):
-    context = {
+    qr_types = [
+        ('🔗', _('Посилання / URL')),
+        ('📝', _('Текст')),
+        ('📧', _('Email')),
+        ('📞', _('Телефон')),
+        ('📶', _('Wi-Fi')),
+        ('👤', _('Контакт vCard')),
+    ]
+    return render(request, 'core/home.html', {
         'user': request.user,
-    }
-    return render(request, 'core/home.html', context)
+        'qr_types': qr_types,
+    })
 
 
 def about_view(request):
