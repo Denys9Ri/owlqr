@@ -1,1 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n %}
 
+{% block title %}{% trans "Тарифи" %}{% endblock %}
+
+{% block content %}
+<div class="section section-center">
+
+  <div class="section-eyebrow">{% trans "Тарифи" %}</div>
+  <h1 class="section-title">{% trans "Оберіть свій план" %}</h1>
+  <p class="section-sub mb-32">
+    {% trans "Починайте безкоштовно. Переходьте на Pro коли будете готові." %}
+  </p>
+
+  <div class="pricing-grid">
+
+    <!-- FREE -->
+    <div class="plan-card">
+      <div class="plan-tier">Free</div>
+      <div class="plan-price">$<sup></sup>0</div>
+      <div class="plan-period">{% trans "назавжди" %}</div>
+      <ul class="plan-features">
+        <li>{% trans "Базовий QR код" %}</li>
+        <li>{% trans "PNG завантаження" %}</li>
+        <li>{% trans "URL, текст, email, телефон, Wi-Fi, vCard" %}</li>
+        <li class="off">{% trans "Кольори та стилі" %}</li>
+        <li class="off">{% trans "Логотип у QR" %}</li>
+        <li class="off">{% trans "SVG експорт" %}</li>
+        <li class="off">{% trans "Динамічний QR" %}</li>
+        <li class="off">{% trans "Статистика сканувань" %}</li>
+      </ul>
+      <a href="{% url 'qr_generator:generator' %}" class="btn btn-outline btn-full">
+        {% trans "Почати безкоштовно" %}
+      </a>
+    </div>
+
+    <!-- PRO -->
+    {% for plan in plans %}
+    <div class="plan-card featured">
+      <div class="plan-badge">{% trans "Популярний" %}</div>
+      <div class="plan-tier">Pro — {{ plan.get_interval_display }}</div>
+      <div class="plan-price">
+        <sup>$</sup>{{ plan.price }}
+      </div>
+      <div class="plan-period">
+        {% if plan.interval == 'monthly' %}
+          {% trans "на місяць" %}
+        {% else %}
+          {% trans "на рік" %}
+        {% endif %}
+      </div>
+      <ul class="plan-features">
+        <li>{% trans "Все з Free" %}</li>
+        <li>{% trans "Кольори та стилі QR" %}</li>
+        <li>{% trans "Логотип у QR коді" %}</li>
+        <li>{% trans "SVG та PNG експорт" %}</li>
+        <li>{% trans "Динамічний QR" %}</li>
+        <li>{% trans "Статистика сканувань" %}</li>
+      </ul>
+
+      {% if user.is_authenticated %}
+        {% if user.is_premium %}
+          <button class="btn btn-secondary btn-full" disabled>
+            ✓ {% trans "Активний план" %}
+          </button>
+        {% else %}
+          <a href="{% url 'payments:create_order' plan.id %}"
+             class="btn btn-gold btn-full">
+            {% trans "Обрати план" %}
+          </a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'accounts:register' %}" class="btn btn-gold btn-full">
+          {% trans "Зареєструватись і обрати" %}
+        </a>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="plan-card featured">
+      <div class="plan-badge">{% trans "Популярний" %}</div>
+      <div class="plan-tier">Pro</div>
+      <div class="plan-price"><sup>$</sup>9</div>
+      <div class="plan-period">{% trans "на місяць" %}</div>
+      <ul class="plan-features">
+        <li>{% trans "Все з Free" %}</li>
+        <li>{% trans "Кольори та стилі QR" %}</li>
+        <li>{% trans "Логотип у QR коді" %}</li>
+        <li>{% trans "SVG та PNG експорт" %}</li>
+        <li>{% trans "Динамічний QR" %}</li>
+        <li>{% trans "Статистика сканувань" %}</li>
+      </ul>
+      <a href="{% url 'accounts:register' %}" class="btn btn-gold btn-full">
+        {% trans "Зареєструватись" %}
+      </a>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <!-- FAQ -->
+  <div style="max-width: 560px; margin: 64px auto 0; text-align: left;">
+    <h2 class="section-title text-center" style="margin-bottom: 32px;">
+      {% trans "Часті питання" %}
+    </h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3 class="faq-q">{% trans "Чи справді безкоштовний план безкоштовний?" %}</h3>
+        <p class="faq-a">{% trans "Так. Базовий QR код — безкоштовно назавжди, без кредитної картки." %}</p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">{% trans "Що таке динамічний QR?" %}</h3>
+        <p class="faq-a">{% trans "Динамічний QR дозволяє змінювати посилання куди він веде без перегенерації коду." %}</p>
+      </div>
+      <div class="faq-item">
+        <h3 class="faq-q">{% trans "Як скасувати підписку?" %}</h3>
+        <p class="faq-a">{% trans "В будь-який момент через ваш профіль. Доступ зберігається до кінця оплаченого періоду." %}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
