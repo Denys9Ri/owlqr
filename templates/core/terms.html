@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Умови використання" %}{% endblock %}
+{% block meta_description %}{% trans "Умови використання сервісу OwlQR." %}{% endblock %}
+
+{% block content %}
+<div class="section" style="max-width: 720px;">
+
+  <div class="section-eyebrow">{% trans "Юридична інформація" %}</div>
+  <h1 class="section-title">{% trans "Умови використання" %}</h1>
+  <p style="font-size: 12px; color: var(--text-hint); margin-bottom: 32px;">
+    {% trans "Останнє оновлення:" %} 2025
+  </p>
+  <div class="divider" style="margin: 0 0 40px;"></div>
+
+  <div class="terms-body">
+
+    <div class="terms-section">
+      <h2 class="terms-h2">1. {% trans "Загальні положення" %}</h2>
+      <p>{% trans "Використовуючи сервіс OwlQR (owlqr.net), ви погоджуєтесь з цими умовами. Якщо ви не погоджуєтесь — будь ласка, не використовуйте сервіс." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">2. {% trans "Опис сервісу" %}</h2>
+      <p>{% trans "OwlQR надає інструменти для генерації QR кодів. Базові функції доступні безкоштовно. Преміум функції доступні за підписку." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">3. {% trans "Акаунт користувача" %}</h2>
+      <p>{% trans "Ви несете відповідальність за безпеку свого акаунту та паролю. Ми не несемо відповідальності за дії третіх осіб що отримали доступ до вашого акаунту." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">4. {% trans "Оплата та підписка" %}</h2>
+      <p>{% trans "Оплата здійснюється через PayPal. Підписка автоматично не продовжується — ви самостійно обираєте план і оплачуєте його. Повернення коштів можливе протягом 7 днів з моменту оплати." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">5. {% trans "Заборонений контент" %}</h2>
+      <p>{% trans "Забороняється створювати QR коди що ведуть на шкідливі сайти, фішингові сторінки, незаконний контент або порушують права третіх осіб. Ми залишаємо право блокувати такі коди." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">6. {% trans "Динамічні QR коди" %}</h2>
+      <p>{% trans "Динамічні QR коди працюють тільки при активній підписці. При закінченні підписки динамічні коди призупиняються до відновлення підписки." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">7. {% trans "Обмеження відповідальності" %}</h2>
+      <p>{% trans "Сервіс надається 'як є'. Ми не гарантуємо безперебійну роботу і не несемо відповідальності за збитки пов'язані з використанням або неможливістю використання сервісу." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">8. {% trans "Зміни умов" %}</h2>
+      <p>{% trans "Ми можемо оновлювати ці умови. Про суттєві зміни ми повідомимо на email. Продовження використання сервісу після змін означає вашу згоду з новими умовами." %}</p>
+    </div>
+
+    <div class="terms-section">
+      <h2 class="terms-h2">9. {% trans "Контакти" %}</h2>
+      <p>{% trans "З питань щодо умов використання:" %}
+        <a href="mailto:hello@owlqr.net" style="color: var(--gold);">hello@owlqr.net</a>
+      </p>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
