@@ -1,1 +1,171 @@
+/* ─── ЗМІННІ ──────────────────────────────────────────── */
+:root {
+  --bg-primary: #FDFAF5;
+  --bg-secondary: #F5F0E8;
+  --bg-white: #FFFFFF;
+  --gold: #B8962E;
+  --gold-light: #D4B04A;
+  --gold-dark: #8A6E1E;
+  --text-primary: #1a1612;
+  --text-secondary: #5a4e3f;
+  --text-muted: #9a8c7a;
+  --text-hint: #c4b89a;
+  --border: #e8dfc8;
+  --border-gold: #d4c5a5;
+  --shadow-sm: 0 2px 8px rgba(184, 150, 46, 0.08);
+  --shadow-md: 0 4px 24px rgba(184, 150, 46, 0.12);
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'DM Sans', sans-serif;
+  --nav-height: 68px;
+}
 
+/* ─── RESET ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: var(--font-sans); }
+input, select, textarea { font-family: var(--font-sans); }
+
+/* ─── НАВІГАЦІЯ ───────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  height: var(--nav-height);
+}
+
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.nav-logo-text em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+}
+
+.nav-links a {
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nav-pro-badge {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  background: var(--gold);
+  color: #fff;
+  padding: 3px 8px;
+  font-weight: 500;
+}
+
+/* ─── МОВА ────────────────────────────────────────────── */
+.lang-form { display: flex; }
+
+.lang-select {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 5px 8px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.lang-select:hover { border-color: var(--gold); }
+
+/* ─── КНОПКИ ──────────────────────────────────────────── */
+.nav-btn-outline {
+  font-size: 13px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 7px 16px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.nav-btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.nav-btn-ghost {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 7px 12px;
+  transition: color 0.2s;
+}
+
+.nav-btn-ghost:hover { color: var(--text-primary); }
+
+.nav-btn-gold {
+  font-size: 13px;
+  background: var(--gold);
+  color: #fff;
+  padding: 8px 18px;
+  letter-spacing: 0.5px;
+  transition: background 0.2s;
+}
+
+.nav-btn-gold:hover { backgro
