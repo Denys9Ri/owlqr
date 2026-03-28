@@ -8,6 +8,9 @@
 
   {% load static i18n %}
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -25,26 +28,9 @@
 
       <!-- Логотип -->
       <a href="{% url 'core:home' %}" class="nav-logo">
-        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-          <rect x="0" y="0" width="10" height="10" fill="#1a1612"/>
-          <rect x="2" y="2" width="6" height="6" fill="#FDFAF5"/>
-          <rect x="3" y="3" width="4" height="4" fill="#1a1612"/>
-          <rect x="13" y="0" width="10" height="10" fill="#1a1612"/>
-          <rect x="15" y="2" width="6" height="6" fill="#FDFAF5"/>
-          <rect x="16" y="3" width="4" height="4" fill="#1a1612"/>
-          <rect x="26" y="0" width="10" height="10" fill="#1a1612"/>
-          <rect x="28" y="2" width="6" height="6" fill="#FDFAF5"/>
-          <rect x="29" y="3" width="4" height="4" fill="#1a1612"/>
-          <rect x="0" y="13" width="10" height="10" fill="#1a1612"/>
-          <rect x="2" y="15" width="6" height="6" fill="#FDFAF5"/>
-          <rect x="3" y="16" width="4" height="4" fill="#1a1612"/>
-          <rect x="26" y="13" width="10" height="10" fill="#1a1612"/>
-          <rect x="28" y="15" width="6" height="6" fill="#FDFAF5"/>
-          <rect x="29" y="16" width="4" height="4" fill="#1a1612"/>
-          <rect x="0" y="26" width="10" height="10" fill="#1a1612"/>
-          <rect x="2" y="28" width="6" height="6" fill="#FDFAF5"/>
-          <rect x="3" y="29" width="4" height="4" fill="#1a1612"/>
-        </svg>
+        <img src="{% static 'img/logo.png' %}"
+             alt="OwlQR"
+             style="width: 42px; height: 42px; object-fit: contain;">
         <span class="nav-logo-text">Owl<em>QR</em></span>
       </a>
 
@@ -106,6 +92,9 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-logo">
+        <img src="{% static 'img/logo.png' %}"
+             alt="OwlQR"
+             style="width: 36px; height: 36px; object-fit: contain;">
         <span class="nav-logo-text">Owl<em>QR</em></span>
         <p>{% trans "Розумний генератор QR-кодів" %}</p>
       </div>
