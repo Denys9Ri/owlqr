@@ -9,7 +9,7 @@ python-dotenv==1.0.0
 whitenoise==6.6.0
 
 # QR генерація
-qrcode==7.4.2
+qrcode[pil]==7.4.2
 Pillow==10.2.0
 
 # HTTP запити (PayPal, Google OAuth)
