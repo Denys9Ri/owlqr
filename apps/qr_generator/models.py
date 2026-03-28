@@ -14,11 +14,34 @@ class QRCode(models.Model):
         ('vcard', 'Контакт (vCard)'),
     ]
 
-    STYLE_CHOICES = [
-        ('square', 'Квадратний'),
-        ('rounded', 'Заокруглений'),
-        ('dots', 'Крапки'),
-    ]
+   STYLE_CHOICES = [
+    ('square', 'Квадратний'),
+    ('rounded', 'Заокруглений'),
+    ('dots', 'Крапки'),
+    ('diamonds', 'Діаманти'),
+    ('stars', 'Зірки'),
+    ('connected', 'З\'єднані'),
+]
+
+EYE_STYLE_CHOICES = [
+    ('square', 'Квадратні'),
+    ('rounded', 'Округлі'),
+    ('circle', 'Кола'),
+    ('drop', 'Краплі'),
+]
+
+FRAME_CHOICES = [
+    ('none', 'Без рамки'),
+    ('simple', 'Проста рамка'),
+    ('scan_me', 'Скануй мене'),
+    ('scan_me_en', 'Scan Me'),
+]
+
+GRADIENT_CHOICES = [
+    ('none', 'Без градієнту'),
+    ('linear', 'Лінійний'),
+    ('radial', 'Радіальний'),
+]
 
     # Унікальний ID для динамічних QR
     uid = models.UUIDField(
