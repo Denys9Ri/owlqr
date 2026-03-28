@@ -14,36 +14,35 @@ class QRCode(models.Model):
         ('vcard', 'Контакт (vCard)'),
     ]
 
-   STYLE_CHOICES = [
-    ('square', 'Квадратний'),
-    ('rounded', 'Заокруглений'),
-    ('dots', 'Крапки'),
-    ('diamonds', 'Діаманти'),
-    ('stars', 'Зірки'),
-    ('connected', 'З\'єднані'),
-]
+    STYLE_CHOICES = [
+        ('square', 'Квадратний'),
+        ('rounded', 'Заокруглений'),
+        ('dots', 'Крапки'),
+        ('diamonds', 'Діаманти'),
+        ('stars', 'Зірки'),
+        ('connected', 'З\'єднані'),
+    ]
 
-EYE_STYLE_CHOICES = [
-    ('square', 'Квадратні'),
-    ('rounded', 'Округлі'),
-    ('circle', 'Кола'),
-    ('drop', 'Краплі'),
-]
+    EYE_STYLE_CHOICES = [
+        ('square', 'Квадратні'),
+        ('rounded', 'Округлі'),
+        ('circle', 'Кола'),
+        ('drop', 'Краплі'),
+    ]
 
-FRAME_CHOICES = [
-    ('none', 'Без рамки'),
-    ('simple', 'Проста рамка'),
-    ('scan_me', 'Скануй мене'),
-    ('scan_me_en', 'Scan Me'),
-]
+    FRAME_CHOICES = [
+        ('none', 'Без рамки'),
+        ('simple', 'Проста рамка'),
+        ('scan_me', 'Скануй мене'),
+        ('scan_me_en', 'Scan Me'),
+    ]
 
-GRADIENT_CHOICES = [
-    ('none', 'Без градієнту'),
-    ('linear', 'Лінійний'),
-    ('radial', 'Радіальний'),
-]
+    GRADIENT_CHOICES = [
+        ('none', 'Без градієнту'),
+        ('linear', 'Лінійний'),
+        ('radial', 'Радіальний'),
+    ]
 
-    # Унікальний ID для динамічних QR
     uid = models.UUIDField(
         default=uuid.uuid4,
         unique=True,
@@ -51,7 +50,6 @@ GRADIENT_CHOICES = [
         db_index=True
     )
 
-    # Власник (необов'язково — гості теж можуть генерувати)
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
@@ -61,7 +59,6 @@ GRADIENT_CHOICES = [
         verbose_name='Користувач'
     )
 
-    # Тип і вміст
     qr_type = models.CharField(
         max_length=16,
         choices=TYPE_CHOICES,
@@ -72,19 +69,16 @@ GRADIENT_CHOICES = [
         verbose_name='Вміст QR коду'
     )
 
-    # Динамічний QR — тільки для premium
     is_dynamic = models.BooleanField(
         default=False,
         verbose_name='Динамічний QR'
     )
-    # Якщо динамічний — redirect веде сюди
     dynamic_url = models.URLField(
         blank=True,
         null=True,
         verbose_name='Динамічне посилання'
     )
 
-    # Дизайн — тільки для premium
     fg_color = models.CharField(
         max_length=7,
         default='#000000',
@@ -101,6 +95,35 @@ GRADIENT_CHOICES = [
         default='square',
         verbose_name='Стиль'
     )
+    eye_style = models.CharField(
+        max_length=16,
+        choices=EYE_STYLE_CHOICES,
+        default='square',
+        verbose_name='Стиль очей'
+    )
+    frame = models.CharField(
+        max_length=16,
+        choices=FRAME_CHOICES,
+        default='none',
+        verbose_name='Рамка'
+    )
+    frame_text = models.CharField(
+        max_length=32,
+        blank=True,
+        default='',
+        verbose_name='Текст рамки'
+    )
+    gradient = models.CharField(
+        max_length=16,
+        choices=GRADIENT_CHOICES,
+        default='none',
+        verbose_name='Градієнт'
+    )
+    gradient_color = models.CharField(
+        max_length=7,
+        default='#000000',
+        verbose_name='Другий колір градієнту'
+    )
     logo = models.ImageField(
         upload_to='qr_logos/',
         blank=True,
@@ -108,7 +131,6 @@ GRADIENT_CHOICES = [
         verbose_name='Логотип'
     )
 
-    # Статистика
     scan_count = models.PositiveIntegerField(
         default=0,
         verbose_name='Кількість сканувань'
@@ -119,14 +141,12 @@ GRADIENT_CHOICES = [
         verbose_name='Останнє сканування'
     )
 
-    # Назва для кабінету
     title = models.CharField(
         max_length=128,
         blank=True,
         verbose_name='Назва'
     )
 
-    # Дати
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -139,22 +159,15 @@ GRADIENT_CHOICES = [
         return f'{self.get_qr_type_display()} — {self.content[:40]}'
 
     def get_scan_url(self):
-        """URL для сканування динамічного QR"""
         return f'/qr/scan/{self.uid}/'
 
     def get_qr_content(self):
-        """
-        Повертає що буде закодовано в QR.
-        Для динамічних — посилання на наш сервер.
-        Для статичних — прямий вміст.
-        """
         if self.is_dynamic:
             return self.get_scan_url()
         return self.content
 
 
 class QRScan(models.Model):
-    """Лог кожного сканування для статистики"""
     qr_code = models.ForeignKey(
         QRCode,
         on_delete=models.CASCADE,
