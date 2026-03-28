@@ -1,18 +1,11 @@
 import io
 import base64
 import qrcode
-import qrcode.image.svg
-from qrcode.image.styledimage import StyledPilImage
-from qrcode.image.styles.moduledrawers import (
-    RoundedModuleDrawer,
-    CircleModuleDrawer,
-    SquareModuleDrawer,
-)
-from PIL import Image
+from PIL import Image, ImageDraw
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -24,42 +17,66 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                       style='square', logo=None, size=300):
     """
     Генерує QR код і повертає PNG як байти.
+    Працює з qrcode[pil] без styledimage.
     """
-    # Вибір стилю модулів
-    drawer_map = {
-        'rounded': RoundedModuleDrawer(),
-        'dots': CircleModuleDrawer(),
-        'square': SquareModuleDrawer(),
-    }
-    module_drawer = drawer_map.get(style, SquareModuleDrawer())
-
     qr = qrcode.QRCode(
         version=None,
-        error_correction=qrcode.constants.ERROR_CORRECT_H,  # H для логотипу
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=10,
         border=4,
     )
     qr.add_data(content)
     qr.make(fit=True)
 
+    # Конвертуємо кольори
+    def hex_to_rgb(hex_color):
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+
+    fg_rgb = hex_to_rgb(fg_color)
+    bg_rgb = hex_to_rgb(bg_color)
+
+    # Базове зображення
     img = qr.make_image(
-        image_factory=StyledPilImage,
-        module_drawer=module_drawer,
-        color_mask=None,
+        fill_color=fg_rgb,
+        back_color=bg_rgb
     ).convert('RGBA')
 
-    # Застосовуємо кольори
-    if fg_color != '#000000' or bg_color != '#FFFFFF':
-        data = img.getdata()
-        new_data = []
-        fg = tuple(int(fg_color[i:i+2], 16) for i in (1, 3, 5)) + (255,)
-        bg = tuple(int(bg_color[i:i+2], 16) for i in (1, 3, 5)) + (255,)
-        for item in data:
-            if item[0] < 128:
-                new_data.append(fg)
-            else:
-                new_data.append(bg)
-        img.putdata(new_data)
+    # Стиль — rounded і dots робимо через маску
+    if style in ('rounded', 'dots'):
+        matrix = qr.get_matrix()
+        box_size = 10
+        border = 4
+        width = (len(matrix[0]) + border * 2) * box_size
+        height = (len(matrix) + border * 2) * box_size
+
+        img = Image.new('RGBA', (width, height), bg_rgb + (255,))
+        draw = ImageDraw.Draw(img)
+
+        for y, row in enumerate(matrix):
+            for x, val in enumerate(row):
+                if val:
+                    x1 = (x + border) * box_size
+                    y1 = (y + border) * box_size
+                    x2 = x1 + box_size
+                    y2 = y1 + box_size
+
+                    if style == 'dots':
+                        # Коло
+                        margin = 1
+                        draw.ellipse(
+                            [x1 + margin, y1 + margin,
+                             x2 - margin, y2 - margin],
+                            fill=fg_rgb + (255,)
+                        )
+                    else:
+                        # Rounded — заокруглений прямокутник
+                        radius = box_size // 3
+                        draw.rounded_rectangle(
+                            [x1 + 1, y1 + 1, x2 - 1, y2 - 1],
+                            radius=radius,
+                            fill=fg_rgb + (255,)
+                        )
 
     # Додаємо логотип якщо є
     if logo:
@@ -71,18 +88,28 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                 (logo_size, logo_size),
                 Image.LANCZOS
             )
-            logo_pos = (
-                (qr_width - logo_size) // 2,
-                (qr_height - logo_size) // 2,
+            # Білий фон під логотип
+            padding = 8
+            bg_box = Image.new(
+                'RGBA',
+                (logo_size + padding * 2, logo_size + padding * 2),
+                (255, 255, 255, 255)
             )
-            img.paste(logo_img, logo_pos, logo_img)
+            logo_pos_x = (qr_width - logo_size) // 2
+            logo_pos_y = (qr_height - logo_size) // 2
+            img.paste(
+                bg_box,
+                (logo_pos_x - padding, logo_pos_y - padding),
+                bg_box
+            )
+            img.paste(logo_img, (logo_pos_x, logo_pos_y), logo_img)
         except Exception:
-            pass  # Якщо помилка з логотипом — генеруємо без нього
+            pass
 
-    # Масштабуємо до потрібного розміру
+    # Масштабуємо
     img = img.resize((size, size), Image.LANCZOS)
 
-    # Конвертуємо в байти
+    # В байти
     buffer = io.BytesIO()
     img.convert('RGB').save(buffer, format='PNG', optimize=True)
     buffer.seek(0)
