@@ -19,12 +19,11 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                       frame_text='', gradient='none', gradient_color='#000000',
                       logo=None, size=300):
 
-    # Надійний конвертер кольорів (захист від порожніх рядків)
+    # Надійний конвертер кольорів
     def hex_to_rgb(hex_color):
         if not hex_color:
             return (0, 0, 0)
         hex_color = str(hex_color).lstrip('#')
-        # Якщо колір у форматі #FFF
         if len(hex_color) == 3:
             hex_color = ''.join([c*2 for c in hex_color])
         if len(hex_color) != 6:
@@ -42,28 +41,27 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         version=None,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=10,
-        border=4,
+        border=0,  # <--- ВАЖЛИВО: Тут має бути 0, бо ми самі додаємо відступи
     )
     qr.add_data(content)
     qr.make(fit=True)
 
     matrix = qr.get_matrix()
     box_size = 10
-    border = 4
+    border = 4  # Наш власний відступ
     cols = len(matrix[0])
     rows = len(matrix)
     width = (cols + border * 2) * box_size
     height = (rows + border * 2) * box_size
 
-    # Використовуємо RGBA для підтримки прозорості
     img = Image.new('RGBA', (width, height), bg_rgb + (255,))
     draw = ImageDraw.Draw(img)
 
-    # Позиції очей в координатах матриці
+    # Позиції очей в координатах чистої матриці
     eye_origins = [
-        (0, 0),            # верхній лівий
-        (0, cols - 7),     # верхній правий
-        (rows - 7, 0),     # нижній лівий
+        (0, 0),            
+        (0, cols - 7),     
+        (rows - 7, 0),     
     ]
 
     def is_eye_module(row, col):
@@ -118,7 +116,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                          px + core_offset + core_size,
                          py + core_offset + core_size], fill=fg_rgb + (255,))
 
-    # ─── Малюємо модулі ───────────────────────────────────
+    # ─── Малюємо модулі (пікселі) ─────────────────────────
     for row_idx, row in enumerate(matrix):
         for col_idx, val in enumerate(row):
             if not val:
@@ -141,18 +139,19 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             else:
                 color = fg_rgb + (255,)
 
+            # Виправлено відступи! Тепер квадрати щільно прилягають один до одного
             if style == 'dots':
                 margin = 1
                 draw.ellipse([x + margin, y + margin, x + box_size - margin, y + box_size - margin], fill=color)
             elif style == 'rounded':
-                draw.rounded_rectangle([x + 1, y + 1, x + box_size - 1, y + box_size - 1], radius=3, fill=color)
+                draw.rounded_rectangle([x, y, x + box_size, y + box_size], radius=3, fill=color)
             elif style == 'diamonds':
                 cx, cy = x + box_size // 2, y + box_size // 2
-                half = box_size // 2 - 1
+                half = box_size // 2
                 draw.polygon([(cx, cy - half), (cx + half, cy), (cx, cy + half), (cx - half, cy)], fill=color)
             elif style == 'stars':
                 cx, cy = x + box_size // 2, y + box_size // 2
-                r_outer = box_size // 2 - 1
+                r_outer = box_size // 2
                 r_inner = r_outer // 2
                 points = []
                 for i in range(10):
@@ -160,10 +159,9 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                     r = r_outer if i % 2 == 0 else r_inner
                     points.append((cx + r * math.cos(angle), cy + r * math.sin(angle)))
                 draw.polygon(points, fill=color)
-            elif style == 'connected':
-                draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
             else:
-                draw.rectangle([x + 1, y + 1, x + box_size - 1, y + box_size - 1], fill=color)
+                # Звичайні квадрати (і connected) без білих ліній
+                draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
 
     # ─── Малюємо очі правильно ────────────────────────────
     for er, ec in eye_origins:
@@ -179,7 +177,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             logo_size = qr_width // 4
             logo_img = logo_img.resize((logo_size, logo_size), Image.LANCZOS)
             padding = 8
-            bg_box = Image.new('RGBA', (logo_size + padding * 2, logo_size + padding * 2), (255, 255, 255, 255))
+            bg_box = Image.new('RGBA', (logo_size + padding * 2, logo_size + padding * 2), bg_rgb + (255,))
             lx = (qr_width - logo_size) // 2
             ly = (qr_height - logo_size) // 2
             img.paste(bg_box, (lx - padding, ly - padding), bg_box)
@@ -218,7 +216,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
     img = img.resize((size, size), Image.LANCZOS)
 
     buffer = io.BytesIO()
-    img.save(buffer, format='PNG', optimize=True) # Збережено альфа-канал
+    img.save(buffer, format='PNG', optimize=True)
     buffer.seek(0)
     return buffer.getvalue()
                         
