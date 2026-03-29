@@ -185,29 +185,73 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         except Exception as e:
             print(f"Помилка логотипу: {e}")
 
-    # ─── Рамка ────────────────────────────────────────────
+   # ─── Рамка ────────────────────────────────────────────
     if frame != 'none':
-        frame_height = 48
+        # 1. Робимо рамку пропорційною розміру QR-коду (15% від висоти)
+        frame_height = int(height * 0.15)
+        frame_height = max(frame_height, 40) # Мінімальна безпечна висота
+
         new_img = Image.new('RGBA', (width, height + frame_height), bg_rgb + (255,))
         new_img.paste(img, (0, 0))
         frame_draw = ImageDraw.Draw(new_img)
 
+        # Пропорційна товщина ліній рамки
+        line_width = max(2, int(box_size * 0.5))
+
         if frame in ('simple', 'scan_me', 'scan_me_en'):
-            frame_draw.rectangle([0, 0, width - 1, height + frame_height - 1], outline=fg_rgb + (255,), width=6)
+            # Малюємо контур рамки
+            frame_draw.rectangle(
+                [0, 0, width - 1, height + frame_height - 1],
+                outline=fg_rgb + (255,), width=line_width
+            )
             
         if frame in ('scan_me', 'scan_me_en'):
-            frame_draw.rectangle([0, height, width, height + frame_height], fill=fg_rgb + (255,))
-            text = frame_text if frame_text else ('Скануй мене' if frame == 'scan_me' else 'Scan Me')
-            try:
-                font = ImageFont.load_default()
-            except Exception:
-                font = None
+            # Заливаємо нижню плашку
+            frame_draw.rectangle(
+                [0, height, width, height + frame_height],
+                fill=fg_rgb + (255,)
+            )
             
-            bbox = frame_draw.textbbox((0, 0), text, font=font)
-            tw = bbox[2] - bbox[0]
-            th = bbox[3] - bbox[1]
+            # Визначаємо текст
+            text = frame_text if frame_text else ('Скануй мене' if frame == 'scan_me' else 'Scan Me')
+
+            # 2. Налаштовуємо шрифт (автомасштабування)
+            font_size = int(frame_height * 0.55) # Текст займає 55% висоти плашки
+            font = None
+
+            # Спроба завантажити стандартні красиві шрифти Linux (Codespaces/Render)
+            font_paths = [
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+                "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf"
+            ]
+
+            for path in font_paths:
+                try:
+                    font = ImageFont.truetype(path, font_size)
+                    break
+                except IOError:
+                    continue
+
+            # Якщо системних шрифтів немає - використовуємо дефолтний
+            if font is None:
+                font = ImageFont.load_default()
+                print("УВАГА: Системні шрифти не знайдено. Текст може бути дрібним.")
+
+            # 3. Вирівнюємо текст ідеально по центру
+            try:
+                bbox = frame_draw.textbbox((0, 0), text, font=font)
+                tw = bbox[2] - bbox[0]
+                th = bbox[3] - bbox[1]
+            except Exception:
+                tw, th = 10, 10
+
             tx = (width - tw) // 2
-            ty = height + (frame_height - th) // 2
+            # Коригуємо позицію Y для візуального балансу
+            ty = height + (frame_height - th) // 2 - int(frame_height * 0.1)
+
+            # Малюємо текст кольором фону (щоб він читався на залитій плашці)
             frame_draw.text((tx, ty), text, fill=bg_rgb + (255,), font=font)
 
         img = new_img
