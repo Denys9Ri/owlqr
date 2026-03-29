@@ -201,6 +201,9 @@
 <form method="post" enctype="multipart/form-data" id="qr-form">
 {% csrf_token %}
 
+<!-- Приховані поля для збору контенту на сервері -->
+<input type="hidden" name="content" id="hidden-content" value="">
+
 <div class="generator-wrap">
 
   <!-- ЛІВА ПАНЕЛЬ -->
@@ -222,40 +225,49 @@
         <input type="hidden" name="qr_type" id="qr-type-input" value="url">
       </div>
 
-      <!-- Вміст -->
-      <div class="form-group" id="content-url">
-  <label>{% trans "Посилання" %}</label>
-  <input type="url" name="content" id="content-url-input"
-         class="form-control" placeholder="https://owlqr.net">
-</div>
+      <!-- Вміст — URL -->
+      <div class="form-group" id="section-url">
+        <label>{% trans "Посилання" %}</label>
+        <input type="url" id="input-url" class="form-control"
+               placeholder="https://owlqr.net">
+      </div>
 
-      <div class="form-group" id="content-text" style="display:none;">
+      <!-- Вміст — Текст -->
+      <div class="form-group" id="section-text" style="display:none;">
         <label>{% trans "Текст" %}</label>
-        <textarea name="content_text" class="form-control" rows="4" placeholder="{% trans 'Введіть текст...' %}"></textarea>
+        <textarea id="input-text" class="form-control" rows="4"
+                  placeholder="{% trans 'Введіть текст...' %}"></textarea>
       </div>
 
-      <div class="form-group" id="content-email" style="display:none;">
+      <!-- Вміст — Email -->
+      <div class="form-group" id="section-email" style="display:none;">
         <label>Email</label>
-        <input type="email" name="content_email" class="form-control" placeholder="hello@example.com">
+        <input type="email" id="input-email" class="form-control"
+               placeholder="hello@example.com">
       </div>
 
-      <div class="form-group" id="content-phone" style="display:none;">
+      <!-- Вміст — Телефон -->
+      <div class="form-group" id="section-phone" style="display:none;">
         <label>{% trans "Телефон" %}</label>
-        <input type="tel" name="content_phone" class="form-control" placeholder="+380501234567">
+        <input type="tel" id="input-phone" class="form-control"
+               placeholder="+380501234567">
       </div>
 
-      <div id="content-wifi" style="display:none;">
+      <!-- Вміст — Wi-Fi -->
+      <div id="section-wifi" style="display:none;">
         <div class="form-group">
           <label>{% trans "Назва мережі (SSID)" %}</label>
-          <input type="text" name="wifi_ssid" class="form-control" placeholder="MyNetwork">
+          <input type="text" id="input-wifi-ssid" class="form-control"
+                 placeholder="MyNetwork">
         </div>
         <div class="form-group">
           <label>{% trans "Пароль" %}</label>
-          <input type="text" name="wifi_password" class="form-control" placeholder="password123">
+          <input type="text" id="input-wifi-password" class="form-control"
+                 placeholder="password123">
         </div>
         <div class="form-group">
           <label>{% trans "Шифрування" %}</label>
-          <select name="wifi_encryption" class="form-control">
+          <select id="input-wifi-encryption" class="form-control">
             <option value="WPA">WPA/WPA2</option>
             <option value="WEP">WEP</option>
             <option value="nopass">{% trans "Без пароля" %}</option>
@@ -263,29 +275,35 @@
         </div>
       </div>
 
-      <div id="content-vcard" style="display:none;">
+      <!-- Вміст — vCard -->
+      <div id="section-vcard" style="display:none;">
         <div class="form-group">
           <label>{% trans "Ім'я" %}</label>
-          <input type="text" name="vcard_name" class="form-control" placeholder="Іван Іваненко">
+          <input type="text" id="input-vcard-name" class="form-control"
+                 placeholder="Іван Іваненко">
         </div>
         <div class="form-group">
           <label>{% trans "Телефон" %}</label>
-          <input type="tel" name="vcard_phone" class="form-control" placeholder="+380501234567">
+          <input type="tel" id="input-vcard-phone" class="form-control"
+                 placeholder="+380501234567">
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="vcard_email" class="form-control" placeholder="ivan@example.com">
+          <input type="email" id="input-vcard-email" class="form-control"
+                 placeholder="ivan@example.com">
         </div>
         <div class="form-group">
           <label>{% trans "Компанія" %}</label>
-          <input type="text" name="vcard_company" class="form-control" placeholder="OwlQR">
+          <input type="text" id="input-vcard-company" class="form-control"
+                 placeholder="OwlQR">
         </div>
       </div>
 
       {% if user.is_authenticated %}
       <div class="form-group">
         <label>{% trans "Назва (для вашого кабінету)" %}</label>
-        <input type="text" name="title" class="form-control" placeholder="{% trans 'Наприклад: Мій сайт' %}">
+        <input type="text" name="title" class="form-control"
+               placeholder="{% trans 'Наприклад: Мій сайт' %}">
       </div>
       {% endif %}
 
@@ -297,7 +315,6 @@
           {% trans "Преміум налаштування" %}
         </div>
 
-        <!-- Кольори -->
         <div class="form-group">
           <label>{% trans "Кольори" %}</label>
           <div class="color-row">
@@ -318,7 +335,6 @@
           </div>
         </div>
 
-        <!-- Стиль модулів -->
         <div class="form-group">
           <label>{% trans "Стиль модулів" %}</label>
           <div class="style-tabs" style="grid-template-columns: repeat(3, 1fr);">
@@ -332,7 +348,6 @@
           <input type="hidden" name="style" id="style-input" value="square">
         </div>
 
-        <!-- Стиль очей -->
         <div class="form-group">
           <label>{% trans "Стиль очей" %}</label>
           <div class="style-tabs" style="grid-template-columns: repeat(4, 1fr);">
@@ -344,7 +359,6 @@
           <input type="hidden" name="eye_style" id="eye-style-input" value="square">
         </div>
 
-        <!-- Градієнт -->
         <div class="form-group">
           <label>{% trans "Градієнт" %}</label>
           <div class="style-tabs" style="grid-template-columns: repeat(3, 1fr);">
@@ -355,7 +369,6 @@
           <input type="hidden" name="gradient" id="gradient-input" value="none">
         </div>
 
-        <!-- Другий колір градієнту -->
         <div class="form-group" id="gradient-color-wrap" style="display:none;">
           <label>{% trans "Другий колір градієнту" %}</label>
           <div class="color-picker-wrap">
@@ -364,7 +377,6 @@
           </div>
         </div>
 
-        <!-- Рамка -->
         <div class="form-group">
           <label>{% trans "Рамка" %}</label>
           <div class="style-tabs" style="grid-template-columns: repeat(2, 1fr);">
@@ -376,20 +388,18 @@
           <input type="hidden" name="frame" id="frame-input" value="none">
         </div>
 
-        <!-- Текст рамки -->
         <div class="form-group" id="frame-text-wrap" style="display:none;">
           <label>{% trans "Власний текст рамки" %}</label>
           <input type="text" name="frame_text" class="form-control"
                  placeholder="{% trans 'Наприклад: Скануй мене!' %}" maxlength="32">
         </div>
 
-        <!-- Логотип -->
         <div class="form-group">
           <label>{% trans "Логотип (PNG, JPG, макс. 2МБ)" %}</label>
-          <input type="file" name="logo" class="form-control" accept="image/png,image/jpeg,image/jpg">
+          <input type="file" name="logo" class="form-control"
+                 accept="image/png,image/jpeg,image/jpg">
         </div>
 
-        <!-- Динамічний QR -->
         <div class="form-group">
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
             <input type="checkbox" name="is_dynamic" id="is-dynamic">
@@ -414,7 +424,7 @@
     </div>
   </div>
 
-  <!-- ПРАВА ПАНЕЛЬ — РЕЗУЛЬТАТ -->
+  <!-- ПРАВА ПАНЕЛЬ -->
   <div class="gen-result">
     <div class="qr-preview-box">
       {% if qr_image_b64 %}
@@ -429,10 +439,9 @@
 
     {% if qr_image_b64 %}
     <div class="qr-actions">
-      <a href="data:image/png;base64,{{ qr_image_b64 }}"
-         download="owlqr.png" class="btn btn-gold btn-full">
+      <button type="button" class="btn btn-gold btn-full" onclick="downloadQR()">
         ↓ {% trans "Завантажити PNG" %}
-      </a>
+      </button>
       {% if qr_obj %}
       <a href="{% url 'qr_generator:download' qr_obj.id %}" class="btn btn-outline btn-full">
         ↓ {% trans "Завантажити PNG (висока якість)" %}
@@ -440,7 +449,9 @@
       {% endif %}
       {% if not user.is_authenticated %}
       <p class="qr-meta">
-        💡 <a href="{% url 'accounts:register' %}" style="color:var(--gold);">{% trans "Зареєструйтесь" %}</a>
+        💡 <a href="{% url 'accounts:register' %}" style="color:var(--gold);">
+          {% trans "Зареєструйтесь" %}
+        </a>
         {% trans "щоб зберігати QR коди" %}
       </p>
       {% endif %}
@@ -456,69 +467,53 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-  // ─── Типи QR ─────────────────────────────────────────
-  const typeTabs = document.querySelectorAll('.qr-type-tab');
   const typeInput = document.getElementById('qr-type-input');
-  const contentSections = ['url', 'text', 'email', 'phone', 'wifi', 'vcard'];
+  const hiddenContent = document.getElementById('hidden-content');
+  const sections = ['url', 'text', 'email', 'phone', 'wifi', 'vcard'];
 
-  typeTabs.forEach(function (tab) {
+  // ─── Перемикач типів ─────────────────────────────────
+  document.querySelectorAll('.qr-type-tab').forEach(function (tab) {
     tab.addEventListener('click', function () {
-      typeTabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.qr-type-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      const type = tab.dataset.type;
-      typeInput.value = type;
-      contentSections.forEach(function (s) {
-        const el = document.getElementById('content-' + s);
-        if (el) el.style.display = s === type ? 'block' : 'none';
+      typeInput.value = tab.dataset.type;
+      sections.forEach(function (s) {
+        const el = document.getElementById('section-' + s);
+        if (el) el.style.display = s === tab.dataset.type ? 'block' : 'none';
       });
     });
   });
 
   // ─── Стиль модулів ───────────────────────────────────
-  const styleTabs = document.querySelectorAll('[data-style]');
-  const styleInput = document.getElementById('style-input');
-  if (styleTabs.length) {
-    styleTabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        styleTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        styleInput.value = tab.dataset.style;
-      });
+  document.querySelectorAll('[data-style]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('[data-style]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('style-input').value = tab.dataset.style;
     });
-  }
+  });
 
   // ─── Стиль очей ──────────────────────────────────────
-  const eyeTabs = document.querySelectorAll('[data-eye]');
-  const eyeInput = document.getElementById('eye-style-input');
-  if (eyeTabs.length) {
-    eyeTabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        eyeTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        eyeInput.value = tab.dataset.eye;
-      });
+  document.querySelectorAll('[data-eye]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('[data-eye]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('eye-style-input').value = tab.dataset.eye;
     });
-  }
+  });
 
   // ─── Градієнт ────────────────────────────────────────
-  const gradientTabs = document.querySelectorAll('[data-gradient]');
-  const gradientInput = document.getElementById('gradient-input');
-  const gradientColorWrap = document.getElementById('gradient-color-wrap');
-  const gradientColor = document.getElementById('gradient-color');
-
-  if (gradientTabs.length) {
-    gradientTabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        gradientTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        gradientInput.value = tab.dataset.gradient;
-        if (gradientColorWrap) {
-          gradientColorWrap.style.display = tab.dataset.gradient !== 'none' ? 'block' : 'none';
-        }
-      });
+  document.querySelectorAll('[data-gradient]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('[data-gradient]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('gradient-input').value = tab.dataset.gradient;
+      const wrap = document.getElementById('gradient-color-wrap');
+      if (wrap) wrap.style.display = tab.dataset.gradient !== 'none' ? 'block' : 'none';
     });
-  }
+  });
 
+  const gradientColor = document.getElementById('gradient-color');
   if (gradientColor) {
     gradientColor.addEventListener('input', function () {
       document.getElementById('gradient-color-label').textContent = gradientColor.value;
@@ -526,85 +521,75 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ─── Рамка ───────────────────────────────────────────
-  const frameTabs = document.querySelectorAll('[data-frame]');
-  const frameInput = document.getElementById('frame-input');
-  const frameTextWrap = document.getElementById('frame-text-wrap');
-
-  if (frameTabs.length) {
-    frameTabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        frameTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        frameInput.value = tab.dataset.frame;
-        if (frameTextWrap) {
-          frameTextWrap.style.display = tab.dataset.frame !== 'none' ? 'block' : 'none';
-        }
-      });
+  document.querySelectorAll('[data-frame]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('[data-frame]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('frame-input').value = tab.dataset.frame;
+      const wrap = document.getElementById('frame-text-wrap');
+      if (wrap) wrap.style.display = tab.dataset.frame !== 'none' ? 'block' : 'none';
     });
-  }
+  });
 
   // ─── Кольори ─────────────────────────────────────────
   const fgColor = document.getElementById('fg-color');
   const bgColor = document.getElementById('bg-color');
-
-  if (fgColor) {
-    fgColor.addEventListener('input', function () {
-      document.getElementById('fg-color-label').textContent = fgColor.value;
-    });
-  }
-
-  if (bgColor) {
-    bgColor.addEventListener('input', function () {
-      document.getElementById('bg-color-label').textContent = bgColor.value;
-    });
-  }
-
-  // ─── Сабміт форми ────────────────────────────────────
-  document.getElementById('qr-form').addEventListener('submit', function () {
-    const type = typeInput.value;
-
-    if (type === 'wifi') {
-      const ssid = document.querySelector('[name=wifi_ssid]').value;
-      const pass = document.querySelector('[name=wifi_password]').value;
-      const enc = document.querySelector('[name=wifi_encryption]').value;
-      setHiddenContent(`WIFI:T:${enc};S:${ssid};P:${pass};;`);
-    }
-
-    if (type === 'vcard') {
-      const name = document.querySelector('[name=vcard_name]').value;
-      const phone = document.querySelector('[name=vcard_phone]').value;
-      const email = document.querySelector('[name=vcard_email]').value;
-      const company = document.querySelector('[name=vcard_company]').value;
-      setHiddenContent(`BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${company}\nEND:VCARD`);
-    }
-
-    if (type === 'email') {
-      setHiddenContent('mailto:' + document.querySelector('[name=content_email]').value);
-    }
-
-    if (type === 'phone') {
-      setHiddenContent('tel:' + document.querySelector('[name=content_phone]').value);
-    }
-
-    if (type === 'text') {
-      setHiddenContent(document.querySelector('[name=content_text]').value);
-    }
+  if (fgColor) fgColor.addEventListener('input', function () {
+    document.getElementById('fg-color-label').textContent = fgColor.value;
+  });
+  if (bgColor) bgColor.addEventListener('input', function () {
+    document.getElementById('bg-color-label').textContent = bgColor.value;
   });
 
-  function setHiddenContent(value) {
-    document.querySelectorAll('[name=content_text],[name=content_email],[name=content_phone]')
-      .forEach(el => el.disabled = true);
-    let hidden = document.getElementById('hidden-content');
-    if (!hidden) {
-      hidden = document.createElement('input');
-      hidden.type = 'hidden';
-      hidden.name = 'content';
-      hidden.id = 'hidden-content';
-      document.getElementById('qr-form').appendChild(hidden);
+  // ─── Збірка контенту перед відправкою ────────────────
+  document.getElementById('qr-form').addEventListener('submit', function (e) {
+    const type = typeInput.value;
+    let content = '';
+
+    if (type === 'url') {
+      content = document.getElementById('input-url').value.trim();
+    } else if (type === 'text') {
+      content = document.getElementById('input-text').value.trim();
+    } else if (type === 'email') {
+      const val = document.getElementById('input-email').value.trim();
+      content = val ? 'mailto:' + val : '';
+    } else if (type === 'phone') {
+      const val = document.getElementById('input-phone').value.trim();
+      content = val ? 'tel:' + val : '';
+    } else if (type === 'wifi') {
+      const ssid = document.getElementById('input-wifi-ssid').value.trim();
+      const pass = document.getElementById('input-wifi-password').value.trim();
+      const enc = document.getElementById('input-wifi-encryption').value;
+      content = `WIFI:T:${enc};S:${ssid};P:${pass};;`;
+    } else if (type === 'vcard') {
+      const name = document.getElementById('input-vcard-name').value.trim();
+      const phone = document.getElementById('input-vcard-phone').value.trim();
+      const email = document.getElementById('input-vcard-email').value.trim();
+      const company = document.getElementById('input-vcard-company').value.trim();
+      content = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${company}\nEND:VCARD`;
     }
-    hidden.value = value;
-  }
+
+    if (!content) {
+      e.preventDefault();
+      alert('{% trans "Введіть вміст для QR коду" %}');
+      return;
+    }
+
+    hiddenContent.value = content;
+  });
 
 });
+
+// ─── Завантаження PNG ─────────────────────────────────
+function downloadQR() {
+  const img = document.getElementById('qr-preview');
+  if (!img) return;
+  const link = document.createElement('a');
+  link.href = img.src;
+  link.download = 'owlqr.png';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 </script>
 {% endblock %}
