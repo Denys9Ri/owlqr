@@ -1,8 +1,10 @@
 import io
 import base64
 import math
+import os
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -139,7 +141,6 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             else:
                 color = fg_rgb + (255,)
 
-            # Виправлено відступи! Тепер квадрати щільно прилягають один до одного
             if style == 'dots':
                 margin = 1
                 draw.ellipse([x + margin, y + margin, x + box_size - margin, y + box_size - margin], fill=color)
@@ -160,7 +161,6 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                     points.append((cx + r * math.cos(angle), cy + r * math.sin(angle)))
                 draw.polygon(points, fill=color)
             else:
-                # Звичайні квадрати (і connected) без білих ліній
                 draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
 
     # ─── Малюємо очі правильно ────────────────────────────
@@ -185,7 +185,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         except Exception as e:
             print(f"Помилка логотипу: {e}")
 
-   # ─── Рамка ────────────────────────────────────────────
+    # ─── Рамка ────────────────────────────────────────────
     if frame != 'none':
         # 1. Робимо рамку пропорційною розміру QR-коду (15% від висоти)
         frame_height = int(height * 0.15)
@@ -219,25 +219,13 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             font_size = int(frame_height * 0.55) # Текст займає 55% висоти плашки
             font = None
 
-            # Спроба завантажити стандартні красиві шрифти Linux (Codespaces/Render)
-            font_paths = [
-                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-                "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
-                "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf"
-            ]
-
-            for path in font_paths:
-                try:
-                    font = ImageFont.truetype(path, font_size)
-                    break
-                except IOError:
-                    continue
-
-            # Якщо системних шрифтів немає - використовуємо дефолтний
-            if font is None:
+            try:
+                # Вказуємо прямий шлях до нашого файлу в корені проекту
+                font_path = os.path.join(settings.BASE_DIR, 'RobotoCondensed-VariableFont_wght.ttf')
+                font = ImageFont.truetype(font_path, font_size)
+            except Exception as e:
+                print(f"Помилка завантаження шрифту: {e}")
                 font = ImageFont.load_default()
-                print("УВАГА: Системні шрифти не знайдено. Текст може бути дрібним.")
 
             # 3. Вирівнюємо текст ідеально по центру
             try:
