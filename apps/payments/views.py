@@ -1,42 +1,14 @@
+import json
 import os
-import requests
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from dateutil.relativedelta import relativedelta
 from .models import Plan, Subscription, Payment
-
-
-# ─── Отримання PayPal Access Token ────────────────────────
-def get_paypal_access_token():
-    client_id = os.getenv('PAYPAL_CLIENT_ID')
-    client_secret = os.getenv('PAYPAL_CLIENT_SECRET')
-    mode = os.getenv('PAYPAL_MODE', 'sandbox')
-
-    if mode == 'sandbox':
-        url = 'https://api-m.sandbox.paypal.com/v1/oauth2/token'
-    else:
-        url = 'https://api-m.paypal.com/v1/oauth2/token'
-
-    response = requests.post(
-        url,
-        headers={'Accept': 'application/json'},
-        auth=(client_id, client_secret),
-        data={'grant_type': 'client_credentials'}
-    )
-    return response.json().get('access_token')
-
-
-# ─── Базовий PayPal URL ────────────────────────────────────
-def get_paypal_base_url():
-    mode = os.getenv('PAYPAL_MODE', 'sandbox')
-    if mode == 'sandbox':
-        return 'https://api-m.sandbox.paypal.com'
-    return 'https://api-m.paypal.com'
 
 
 # ─── Сторінка тарифів ─────────────────────────────────────
@@ -52,129 +24,67 @@ def pricing_view(request):
     return render(request, 'payments/pricing.html', {
         'plans': plans,
         'user_subscription': user_subscription,
+        # Передаємо Client ID у шаблон для JS
+        'paypal_client_id': os.getenv('PAYPAL_CLIENT_ID', ''), 
     })
 
 
-# ─── Створення PayPal замовлення ──────────────────────────
+# ─── Успішна оплата (приймає сигнал від JS) ───────────────
 @login_required
-def create_order_view(request, plan_id):
-    plan = get_object_or_404(Plan, id=plan_id, is_active=True)
-    access_token = get_paypal_access_token()
+def paypal_success_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            subscription_id = data.get('subscription_id')
+            plan_id = data.get('plan_id')
 
-    order_data = {
-        'intent': 'CAPTURE',
-        'purchase_units': [{
-            'amount': {
-                'currency_code': plan.currency,
-                'value': str(plan.price),
-            },
-            'description': f'OwlQR {plan.name} — {plan.interval}',
-        }],
-        'application_context': {
-            'brand_name': 'OwlQR',
-            'return_url': request.build_absolute_uri(f'/payments/success/{plan_id}/'),
-            'cancel_url': request.build_absolute_uri('/payments/cancel/'),
-            'user_action': 'PAY_NOW',
-        }
-    }
+            plan = get_object_or_404(Plan, id=plan_id, is_active=True)
 
-    response = requests.post(
-        f'{get_paypal_base_url()}/v2/checkout/orders',
-        headers={
-            'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/json',
-        },
-        json=order_data
-    )
-    order = response.json()
+            if not subscription_id:
+                return JsonResponse({'status': 'error', 'message': 'No subscription ID'}, status=400)
 
-    if response.status_code != 201:
-        messages.error(request, _('Помилка створення платежу. Спробуйте ще раз.'))
-        return redirect('payments:pricing')
+            now = timezone.now()
+            if plan.interval == 'monthly':
+                expires_at = now + relativedelta(months=1)
+            else:
+                expires_at = now + relativedelta(years=1)
 
-    # Зберігаємо order_id в сесії
-    request.session['paypal_order_id'] = order.get('id')
-    request.session['plan_id'] = plan_id
+            # Оновлюємо або створюємо підписку в БД
+            subscription, created = Subscription.objects.update_or_create(
+                user=request.user,
+                defaults={
+                    'plan': plan,
+                    'status': 'active',
+                    'paypal_order_id': subscription_id, # зберігаємо ID підписки PayPal
+                    'started_at': now,
+                    'expires_at': expires_at,
+                }
+            )
 
-    # Перенаправляємо на PayPal
-    for link in order.get('links', []):
-        if link.get('rel') == 'approve':
-            return redirect(link.get('href'))
+            # Фіксуємо платіж
+            Payment.objects.create(
+                user=request.user,
+                subscription=subscription,
+                paypal_order_id=subscription_id,
+                amount=plan.price,
+                currency=plan.currency,
+                status='completed',
+            )
 
-    messages.error(request, _('Не вдалось отримати посилання PayPal'))
-    return redirect('payments:pricing')
+            # Вмикаємо юзеру PRO
+            if hasattr(subscription, 'sync_user_premium'):
+                subscription.sync_user_premium()
+            else:
+                request.user.is_premium = True
+                request.user.save()
 
-
-# ─── Успішна оплата ───────────────────────────────────────
-@login_required
-def payment_success_view(request, plan_id):
-    order_id = request.GET.get('token')
-    plan = get_object_or_404(Plan, id=plan_id, is_active=True)
-
-    if not order_id:
-        messages.error(request, _('Помилка підтвердження платежу'))
-        return redirect('payments:pricing')
-
-    # Підтверджуємо платіж у PayPal
-    access_token = get_paypal_access_token()
-    response = requests.post(
-        f'{get_paypal_base_url()}/v2/checkout/orders/{order_id}/capture',
-        headers={
-            'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/json',
-        }
-    )
-    capture_data = response.json()
-
-    if capture_data.get('status') != 'COMPLETED':
-        messages.error(request, _('Платіж не підтверджено'))
-        return redirect('payments:pricing')
-
-    # Визначаємо дату закінчення підписки
-    now = timezone.now()
-    if plan.interval == 'monthly':
-        expires_at = now + relativedelta(months=1)
-    else:
-        expires_at = now + relativedelta(years=1)
-
-    # Створюємо або оновлюємо підписку
-    subscription, created = Subscription.objects.update_or_create(
-        user=request.user,
-        defaults={
-            'plan': plan,
-            'status': 'active',
-            'paypal_order_id': order_id,
-            'started_at': now,
-            'expires_at': expires_at,
-        }
-    )
-
-    # Зберігаємо платіж в історії
-    Payment.objects.create(
-        user=request.user,
-        subscription=subscription,
-        paypal_order_id=order_id,
-        amount=plan.price,
-        currency=plan.currency,
-        status='completed',
-    )
-
-    # Оновлюємо is_premium користувача
-    subscription.sync_user_premium()
-
-    # Очищаємо сесію
-    request.session.pop('paypal_order_id', None)
-    request.session.pop('plan_id', None)
-
-    messages.success(request, _('Підписку активовано! Ласкаво просимо до OwlQR Pro!'))
-    return redirect('accounts:profile')
-
-
-# ─── Скасування оплати ────────────────────────────────────
-@login_required
-def payment_cancel_view(request):
-    messages.warning(request, _('Оплату скасовано'))
-    return redirect('payments:pricing')
+            messages.success(request, _('Підписку активовано! Ласкаво просимо до OwlQR Pro!'))
+            return JsonResponse({'status': 'success'})
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
 # ─── Скасування підписки ──────────────────────────────────
@@ -188,7 +98,8 @@ def cancel_subscription_view(request):
 
     subscription.status = 'cancelled'
     subscription.save()
-    subscription.sync_user_premium()
+    if hasattr(subscription, 'sync_user_premium'):
+        subscription.sync_user_premium()
 
     messages.success(request, _('Підписку скасовано'))
     return redirect('accounts:profile')
