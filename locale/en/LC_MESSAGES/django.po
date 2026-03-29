@@ -5,20 +5,155 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
+msgid "Головна"
+msgstr "Home"
+
 msgid "Генератор QR кодів"
 msgstr "QR Code Generator"
+
+msgid "Створіть QR код безкоштовно онлайн. URL, текст, email, телефон, Wi-Fi."
+msgstr "Create QR code free online. URL, text, email, phone, Wi-Fi."
+
+msgid "Генератор"
+msgstr "Generator"
+
+msgid "Ціни"
+msgstr "Pricing"
+
+msgid "Про нас"
+msgstr "About"
+
+msgid "Увійти"
+msgstr "Login"
+
+msgid "Реєстрація"
+msgstr "Register"
+
+msgid "Вийти"
+msgstr "Logout"
+
+msgid "Розумний генератор QR-кодів"
+msgstr "Smart QR Code Generator"
+
+msgid "Створіть свій"
+msgstr "Create your"
+
+msgid "QR-код"
+msgstr "QR code"
+
+msgid "за секунди"
+msgstr "in seconds"
+
+msgid "Безкоштовно для базових кодів. Преміум дизайн — для тих хто хоче виділятись."
+msgstr "Free for basic codes. Premium design — for those who want to stand out."
 
 msgid "Створити QR код"
 msgstr "Create QR Code"
 
-msgid "Тип QR коду"
-msgstr "QR Code Type"
+msgid "Можливості"
+msgstr "Features"
+
+msgid "Що можна створити"
+msgstr "What you can create"
+
+msgid "Від простого чорно-білого до брендованого QR з логотипом"
+msgstr "From simple black-and-white to branded QR with logo"
+
+msgid "Звичайний QR"
+msgstr "Basic QR"
+
+msgid "URL, текст, email, телефон"
+msgstr "URL, text, email, phone"
+
+msgid "Безкоштовно"
+msgstr "Free"
+
+msgid "Кольоровий QR"
+msgstr "Colored QR"
+
+msgid "Власні кольори та стилі"
+msgstr "Custom colors and styles"
+
+msgid "QR з логотипом"
+msgstr "QR with logo"
+
+msgid "Завантажте свій логотип"
+msgstr "Upload your logo"
+
+msgid "Динамічний QR"
+msgstr "Dynamic QR"
+
+msgid "Змінюйте посилання без нового QR"
+msgstr "Change the link without a new QR"
+
+msgid "Типи"
+msgstr "Types"
+
+msgid "Для чого можна використати"
+msgstr "What it can be used for"
+
+msgid "Посилання / URL"
+msgstr "Link / URL"
 
 msgid "Текст"
 msgstr "Text"
 
-msgid "Телефон"
-msgstr "Phone"
+msgid "Контакт vCard"
+msgstr "Contact vCard"
+
+msgid "Тарифи"
+msgstr "Pricing"
+
+msgid "Оберіть свій план"
+msgstr "Choose your plan"
+
+msgid "Починайте безкоштовно. Переходьте на Pro коли будете готові."
+msgstr "Start for free. Upgrade to Pro when you're ready."
+
+msgid "назавжди"
+msgstr "forever"
+
+msgid "Базовий QR код"
+msgstr "Basic QR code"
+
+msgid "PNG завантаження"
+msgstr "PNG download"
+
+msgid "URL, текст, email, телефон"
+msgstr "URL, text, email, phone"
+
+msgid "Кольори та логотип"
+msgstr "Colors and logo"
+
+msgid "Статистика сканувань"
+msgstr "Scan statistics"
+
+msgid "Почати безкоштовно"
+msgstr "Start for free"
+
+msgid "Все з Free"
+msgstr "Everything in Free"
+
+msgid "Кольори + логотип"
+msgstr "Colors + logo"
+
+msgid "Стилі QR (квадрат, круглий, крапки)"
+msgstr "QR styles (square, round, dots)"
+
+msgid "SVG та PNG експорт"
+msgstr "SVG and PNG export"
+
+msgid "Спробувати Pro"
+msgstr "Try Pro"
+
+msgid "Популярний"
+msgstr "Popular"
+
+msgid "на місяць"
+msgstr "per month"
+
+msgid "Тип QR коду"
+msgstr "QR code type"
 
 msgid "Посилання"
 msgstr "Link"
@@ -26,17 +161,380 @@ msgstr "Link"
 msgid "Введіть текст..."
 msgstr "Enter text..."
 
-msgid "Згенерувати QR код"
-msgstr "Generate QR Code"
+msgid "Телефон"
+msgstr "Phone"
+
+msgid "Назва мережі (SSID)"
+msgstr "Network name (SSID)"
+
+msgid "Пароль"
+msgstr "Password"
+
+msgid "Шифрування"
+msgstr "Encryption"
+
+msgid "Без пароля"
+msgstr "No password"
+
+msgid "Ім'я"
+msgstr "Name"
+
+msgid "Компанія"
+msgstr "Company"
+
+msgid "Назва (для вашого кабінету)"
+msgstr "Title (for your dashboard)"
+
+msgid "Наприклад: Мій сайт"
+msgstr "Example: My website"
+
+msgid "Преміум налаштування"
+msgstr "Premium settings"
+
+msgid "Кольори"
+msgstr "Colors"
+
+msgid "Колір QR"
+msgstr "QR color"
+
+msgid "Колір фону"
+msgstr "Background color"
+
+msgid "Стиль модулів"
+msgstr "Module style"
+
+msgid "Квадрат"
+msgstr "Square"
+
+msgid "Округлий"
+msgstr "Rounded"
+
+msgid "Крапки"
+msgstr "Dots"
+
+msgid "Діаманти"
+msgstr "Diamonds"
+
+msgid "Зірки"
+msgstr "Stars"
+
+msgid "З'єднані"
+msgstr "Connected"
+
+msgid "Стиль очей"
+msgstr "Eye style"
+
+msgid "Округлі"
+msgstr "Rounded"
+
+msgid "Кола"
+msgstr "Circles"
+
+msgid "Краплі"
+msgstr "Drops"
+
+msgid "Градієнт"
+msgstr "Gradient"
+
+msgid "Без"
+msgstr "None"
+
+msgid "Лінійний"
+msgstr "Linear"
+
+msgid "Радіальний"
+msgstr "Radial"
+
+msgid "Другий колір градієнту"
+msgstr "Second gradient color"
+
+msgid "Рамка"
+msgstr "Frame"
+
+msgid "Без рамки"
+msgstr "No frame"
+
+msgid "Проста"
+msgstr "Simple"
+
+msgid "Скануй мене"
+msgstr "Scan me"
+
+msgid "Власний текст рамки"
+msgstr "Custom frame text"
+
+msgid "Наприклад: Скануй мене!"
+msgstr "Example: Scan me!"
+
+msgid "Логотип (PNG, JPG, макс. 2МБ)"
+msgstr "Logo (PNG, JPG, max 2MB)"
+
+msgid "Динамічний QR (можна змінювати посилання)"
+msgstr "Dynamic QR (link can be changed)"
+
+msgid "Кольори, стилі, логотип та динамічний QR доступні в Pro"
+msgstr "Colors, styles, logo and dynamic QR available in Pro"
 
 msgid "Отримати Pro"
 msgstr "Get Pro"
 
+msgid "Згенерувати QR код"
+msgstr "Generate QR Code"
+
+msgid "Тут з'явиться ваш QR код"
+msgstr "Your QR code will appear here"
+
 msgid "Завантажити PNG"
 msgstr "Download PNG"
+
+msgid "Завантажити PNG (висока якість)"
+msgstr "Download PNG (high quality)"
 
 msgid "Зареєструйтесь"
 msgstr "Register"
 
 msgid "щоб зберігати QR коди"
 msgstr "to save your QR codes"
+
+msgid "Введіть вміст для QR коду"
+msgstr "Enter content for QR code"
+
+msgid "Помилка генерації QR коду"
+msgstr "QR code generation error"
+
+msgid "Вхід в акаунт"
+msgstr "Sign in"
+
+msgid "Ще немає акаунту?"
+msgstr "Don't have an account?"
+
+msgid "Зареєструватись"
+msgstr "Sign up"
+
+msgid "Увійти через Google"
+msgstr "Sign in with Google"
+
+msgid "або"
+msgstr "or"
+
+msgid "Невірний email або пароль"
+msgstr "Invalid email or password"
+
+msgid "Акаунт деактивовано"
+msgstr "Account deactivated"
+
+msgid "Заповніть всі поля"
+msgstr "Fill in all fields"
+
+msgid "Створити акаунт"
+msgstr "Create account"
+
+msgid "Вже є акаунт?"
+msgstr "Already have an account?"
+
+msgid "Увійти"
+msgstr "Sign in"
+
+msgid "Зареєструватись через Google"
+msgstr "Sign up with Google"
+
+msgid "Мінімум 8 символів"
+msgstr "Minimum 8 characters"
+
+msgid "Підтвердіть пароль"
+msgstr "Confirm password"
+
+msgid "Паролі не співпадають"
+msgstr "Passwords do not match"
+
+msgid "Пароль має бути мінімум 8 символів"
+msgstr "Password must be at least 8 characters"
+
+msgid "Цей email вже зареєстрований"
+msgstr "This email is already registered"
+
+msgid "Ласкаво просимо до OwlQR!"
+msgstr "Welcome to OwlQR!"
+
+msgid "Реєструючись, ви погоджуєтесь з"
+msgstr "By registering, you agree to the"
+
+msgid "умовами використання"
+msgstr "terms of use"
+
+msgid "Акаунт"
+msgstr "Account"
+
+msgid "Особисті дані"
+msgstr "Personal data"
+
+msgid "Прізвище"
+msgstr "Last name"
+
+msgid "Зберегти"
+msgstr "Save"
+
+msgid "Профіль оновлено"
+msgstr "Profile updated"
+
+msgid "Підписка"
+msgstr "Subscription"
+
+msgid "Активна до:"
+msgstr "Active until:"
+
+msgid "Скасувати підписку"
+msgstr "Cancel subscription"
+
+msgid "Скасувати підписку?"
+msgstr "Cancel subscription?"
+
+msgid "У вас безкоштовний план. Перейдіть на Pro щоб отримати більше можливостей."
+msgstr "You have a free plan. Upgrade to Pro for more features."
+
+msgid "Перейти на Pro"
+msgstr "Upgrade to Pro"
+
+msgid "Статистика"
+msgstr "Statistics"
+
+msgid "QR кодів створено"
+msgstr "QR codes created"
+
+msgid "Всього сканувань"
+msgstr "Total scans"
+
+msgid "Акаунт створено"
+msgstr "Account created"
+
+msgid "Мої QR коди"
+msgstr "My QR Codes"
+
+msgid "Переглянути всі QR коди"
+msgstr "View all QR codes"
+
+msgid "Кабінет"
+msgstr "Dashboard"
+
+msgid "Новий QR"
+msgstr "New QR"
+
+msgid "сканувань"
+msgstr "scans"
+
+msgid "Змінити URL"
+msgstr "Change URL"
+
+msgid "Видалити QR код?"
+msgstr "Delete QR code?"
+
+msgid "QR код видалено"
+msgstr "QR code deleted"
+
+msgid "У вас ще немає QR кодів"
+msgstr "You have no QR codes yet"
+
+msgid "Створіть перший QR код прямо зараз"
+msgstr "Create your first QR code right now"
+
+msgid "QR код недоступний"
+msgstr "QR code unavailable"
+
+msgid "QR код призупинено"
+msgstr "QR code suspended"
+
+msgid "Підписка власника цього QR коду закінчилась. Для відновлення роботи потрібно продовжити підписку."
+msgstr "The owner's subscription has expired. Renew the subscription to restore access."
+
+msgid "Створити власний QR код"
+msgstr "Create your own QR code"
+
+msgid "Оберіть свій план"
+msgstr "Choose your plan"
+
+msgid "Все з Free"
+msgstr "Everything in Free"
+
+msgid "Зареєструватись і обрати"
+msgstr "Register and choose"
+
+msgid "Обрати план"
+msgstr "Choose plan"
+
+msgid "Активний план"
+msgstr "Active plan"
+
+msgid "Часті питання"
+msgstr "FAQ"
+
+msgid "Чи справді безкоштовний план безкоштовний?"
+msgstr "Is the free plan really free?"
+
+msgid "Так. Базовий QR код — безкоштовно назавжди, без кредитної картки."
+msgstr "Yes. Basic QR code — free forever, no credit card required."
+
+msgid "Що таке динамічний QR?"
+msgstr "What is a dynamic QR?"
+
+msgid "Динамічний QR дозволяє змінювати посилання куди він веде без перегенерації коду."
+msgstr "Dynamic QR allows you to change the destination link without regenerating the code."
+
+msgid "Як скасувати підписку?"
+msgstr "How to cancel subscription?"
+
+msgid "В будь-який момент через ваш профіль. Доступ зберігається до кінця оплаченого періоду."
+msgstr "Anytime through your profile. Access remains until the end of the paid period."
+
+msgid "Про проект"
+msgstr "About"
+
+msgid "Про OwlQR"
+msgstr "About OwlQR"
+
+msgid "OwlQR — це простий і елегантний інструмент для створення QR кодів. Ми віримо що якісний інструмент не повинен бути складним або дорогим."
+msgstr "OwlQR is a simple and elegant QR code creation tool. We believe quality tools don't have to be complex or expensive."
+
+msgid "Базові QR коди — безкоштовно назавжди. Преміум функції — для тих хто хоче більше: кольори, логотип, динамічні коди та статистика сканувань."
+msgstr "Basic QR codes — free forever. Premium features — for those who want more: colors, logo, dynamic codes and scan statistics."
+
+msgid "Розумно"
+msgstr "Smart"
+
+msgid "Динамічні QR коди які можна редагувати"
+msgstr "Dynamic QR codes that can be edited"
+
+msgid "Швидко"
+msgstr "Fast"
+
+msgid "QR код за секунди без реєстрації"
+msgstr "QR code in seconds without registration"
+
+msgid "Глобально"
+msgstr "Global"
+
+msgid "Підтримка 5 мов інтерфейсу"
+msgstr "Support for 5 interface languages"
+
+msgid "Готові спробувати?"
+msgstr "Ready to try?"
+
+msgid "Створіть перший QR код безкоштовно — без реєстрації"
+msgstr "Create your first QR code for free — no registration"
+
+msgid "Юридична інформація"
+msgstr "Legal information"
+
+msgid "Умови використання"
+msgstr "Terms of use"
+
+msgid "Останнє оновлення:"
+msgstr "Last updated:"
+
+msgid "Політика конфіденційності"
+msgstr "Privacy Policy"
+
+msgid "Конфіденційність"
+msgstr "Privacy"
+
+msgid "Розумний генератор QR-кодів"
+msgstr "Smart QR Code Generator"
