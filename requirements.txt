@@ -17,3 +17,6 @@ requests==2.31.0
 
 # Дати підписок
 python-dateutil==2.8.2
+
+# Google Auth
+django-allauth==0.61.1
