@@ -116,7 +116,6 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                          px + core_offset + core_size,
                          py + core_offset + core_size], fill=fg_rgb + (255,))
 
-    # ─── Малюємо модулі ───────────────────────────────────
     for row_idx, row in enumerate(matrix):
         for col_idx, val in enumerate(row):
             if not val:
@@ -161,13 +160,11 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             else:
                 draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
 
-    # ─── Малюємо очі ──────────────────────────────────────
     for er, ec in eye_origins:
         px = (ec + border) * box_size
         py = (er + border) * box_size
         draw_eye(draw, px, py, eye_style, fg_rgb, bg_rgb)
 
-    # ─── Логотип ───────────────────────────────────────────
     if logo:
         try:
             logo_img = Image.open(logo).convert('RGBA')
@@ -183,15 +180,12 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         except Exception as e:
             print(f"Помилка логотипу: {e}")
 
-    # ─── Рамка ────────────────────────────────────────────
     if frame != 'none':
         frame_height = int(height * 0.15)
         frame_height = max(frame_height, 40)
-
         new_img = Image.new('RGBA', (width, height + frame_height), bg_rgb + (255,))
         new_img.paste(img, (0, 0))
         frame_draw = ImageDraw.Draw(new_img)
-
         line_width = max(2, int(box_size * 0.5))
 
         if frame in ('simple', 'scan_me', 'scan_me_en'):
@@ -201,13 +195,9 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             )
 
         if frame in ('scan_me', 'scan_me_en'):
-            frame_draw.rectangle(
-                [0, height, width, height + frame_height],
-                fill=fg_rgb + (255,)
-            )
+            frame_draw.rectangle([0, height, width, height + frame_height], fill=fg_rgb + (255,))
             text = frame_text if frame_text else ('Скануй мене' if frame == 'scan_me' else 'Scan Me')
             font_size = int(frame_height * 0.55)
-            font = None
             try:
                 font_path = os.path.join(settings.BASE_DIR, 'RobotoCondensed-VariableFont_wght.ttf')
                 font = ImageFont.truetype(font_path, font_size)
@@ -225,9 +215,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
 
         img = new_img
 
-    # ─── Масштаб ───────────────────────────────────────────
     img = img.resize((size, size), Image.LANCZOS)
-
     buffer = io.BytesIO()
     img.save(buffer, format='PNG', optimize=True)
     buffer.seek(0)
@@ -242,40 +230,8 @@ def generator_view(request):
     if request.method == 'POST':
         qr_type = request.POST.get('qr_type', 'url')
 
-        # ─── Збираємо контент залежно від типу ───────────
+        # JS вже зібрав контент в hidden поле — просто читаємо
         content = request.POST.get('content', '').strip()
-
-        if qr_type == 'text':
-            content = request.POST.get('content_text', '').strip()
-
-        elif qr_type == 'email':
-            email_val = request.POST.get('content_email', '').strip()
-            content = f'mailto:{email_val}' if email_val else ''
-
-        elif qr_type == 'phone':
-            phone_val = request.POST.get('content_phone', '').strip()
-            content = f'tel:{phone_val}' if phone_val else ''
-
-        elif qr_type == 'wifi':
-            ssid = request.POST.get('wifi_ssid', '').strip()
-            password = request.POST.get('wifi_password', '').strip()
-            encryption = request.POST.get('wifi_encryption', 'WPA')
-            content = f'WIFI:T:{encryption};S:{ssid};P:{password};;'
-
-        elif qr_type == 'vcard':
-            name = request.POST.get('vcard_name', '').strip()
-            phone = request.POST.get('vcard_phone', '').strip()
-            email = request.POST.get('vcard_email', '').strip()
-            company = request.POST.get('vcard_company', '').strip()
-            content = (
-                f'BEGIN:VCARD\n'
-                f'VERSION:3.0\n'
-                f'FN:{name}\n'
-                f'TEL:{phone}\n'
-                f'EMAIL:{email}\n'
-                f'ORG:{company}\n'
-                f'END:VCARD'
-            )
 
         if not content:
             messages.error(request, _('Введіть вміст для QR коду'))
