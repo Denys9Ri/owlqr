@@ -21,7 +21,6 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                       frame_text='', gradient='none', gradient_color='#000000',
                       logo=None, size=300):
 
-    # Надійний конвертер кольорів
     def hex_to_rgb(hex_color):
         if not hex_color:
             return (0, 0, 0)
@@ -43,14 +42,14 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         version=None,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=10,
-        border=0,  # <--- ВАЖЛИВО: Тут має бути 0, бо ми самі додаємо відступи
+        border=0,
     )
     qr.add_data(content)
     qr.make(fit=True)
 
     matrix = qr.get_matrix()
     box_size = 10
-    border = 4  # Наш власний відступ
+    border = 4
     cols = len(matrix[0])
     rows = len(matrix)
     width = (cols + border * 2) * box_size
@@ -59,11 +58,10 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
     img = Image.new('RGBA', (width, height), bg_rgb + (255,))
     draw = ImageDraw.Draw(img)
 
-    # Позиції очей в координатах чистої матриці
     eye_origins = [
-        (0, 0),            
-        (0, cols - 7),     
-        (rows - 7, 0),     
+        (0, 0),
+        (0, cols - 7),
+        (rows - 7, 0),
     ]
 
     def is_eye_module(row, col):
@@ -118,7 +116,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                          px + core_offset + core_size,
                          py + core_offset + core_size], fill=fg_rgb + (255,))
 
-    # ─── Малюємо модулі (пікселі) ─────────────────────────
+    # ─── Малюємо модулі ───────────────────────────────────
     for row_idx, row in enumerate(matrix):
         for col_idx, val in enumerate(row):
             if not val:
@@ -163,7 +161,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             else:
                 draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
 
-    # ─── Малюємо очі правильно ────────────────────────────
+    # ─── Малюємо очі ──────────────────────────────────────
     for er, ec in eye_origins:
         px = (ec + border) * box_size
         py = (er + border) * box_size
@@ -187,59 +185,42 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
 
     # ─── Рамка ────────────────────────────────────────────
     if frame != 'none':
-        # 1. Робимо рамку пропорційною розміру QR-коду (15% від висоти)
         frame_height = int(height * 0.15)
-        frame_height = max(frame_height, 40) # Мінімальна безпечна висота
+        frame_height = max(frame_height, 40)
 
         new_img = Image.new('RGBA', (width, height + frame_height), bg_rgb + (255,))
         new_img.paste(img, (0, 0))
         frame_draw = ImageDraw.Draw(new_img)
 
-        # Пропорційна товщина ліній рамки
         line_width = max(2, int(box_size * 0.5))
 
         if frame in ('simple', 'scan_me', 'scan_me_en'):
-            # Малюємо контур рамки
             frame_draw.rectangle(
                 [0, 0, width - 1, height + frame_height - 1],
                 outline=fg_rgb + (255,), width=line_width
             )
-            
+
         if frame in ('scan_me', 'scan_me_en'):
-            # Заливаємо нижню плашку
             frame_draw.rectangle(
                 [0, height, width, height + frame_height],
                 fill=fg_rgb + (255,)
             )
-            
-            # Визначаємо текст
             text = frame_text if frame_text else ('Скануй мене' if frame == 'scan_me' else 'Scan Me')
-
-            # 2. Налаштовуємо шрифт (автомасштабування)
-            font_size = int(frame_height * 0.55) # Текст займає 55% висоти плашки
+            font_size = int(frame_height * 0.55)
             font = None
-
             try:
-                # Вказуємо прямий шлях до нашого файлу в корені проекту
                 font_path = os.path.join(settings.BASE_DIR, 'RobotoCondensed-VariableFont_wght.ttf')
                 font = ImageFont.truetype(font_path, font_size)
-            except Exception as e:
-                print(f"Помилка завантаження шрифту: {e}")
+            except Exception:
                 font = ImageFont.load_default()
-
-            # 3. Вирівнюємо текст ідеально по центру
             try:
                 bbox = frame_draw.textbbox((0, 0), text, font=font)
                 tw = bbox[2] - bbox[0]
                 th = bbox[3] - bbox[1]
             except Exception:
                 tw, th = 10, 10
-
             tx = (width - tw) // 2
-            # Коригуємо позицію Y для візуального балансу
             ty = height + (frame_height - th) // 2 - int(frame_height * 0.1)
-
-            # Малюємо текст кольором фону (щоб він читався на залитій плашці)
             frame_draw.text((tx, ty), text, fill=bg_rgb + (255,), font=font)
 
         img = new_img
@@ -251,15 +232,50 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
     img.save(buffer, format='PNG', optimize=True)
     buffer.seek(0)
     return buffer.getvalue()
-                        
+
+
 # ─── Головна сторінка генератора ─────────────────────────
 def generator_view(request):
     qr_image_b64 = None
     qr_obj = None
 
     if request.method == 'POST':
-        content = request.POST.get('content', '').strip()
         qr_type = request.POST.get('qr_type', 'url')
+
+        # ─── Збираємо контент залежно від типу ───────────
+        content = request.POST.get('content', '').strip()
+
+        if qr_type == 'text':
+            content = request.POST.get('content_text', '').strip()
+
+        elif qr_type == 'email':
+            email_val = request.POST.get('content_email', '').strip()
+            content = f'mailto:{email_val}' if email_val else ''
+
+        elif qr_type == 'phone':
+            phone_val = request.POST.get('content_phone', '').strip()
+            content = f'tel:{phone_val}' if phone_val else ''
+
+        elif qr_type == 'wifi':
+            ssid = request.POST.get('wifi_ssid', '').strip()
+            password = request.POST.get('wifi_password', '').strip()
+            encryption = request.POST.get('wifi_encryption', 'WPA')
+            content = f'WIFI:T:{encryption};S:{ssid};P:{password};;'
+
+        elif qr_type == 'vcard':
+            name = request.POST.get('vcard_name', '').strip()
+            phone = request.POST.get('vcard_phone', '').strip()
+            email = request.POST.get('vcard_email', '').strip()
+            company = request.POST.get('vcard_company', '').strip()
+            content = (
+                f'BEGIN:VCARD\n'
+                f'VERSION:3.0\n'
+                f'FN:{name}\n'
+                f'TEL:{phone}\n'
+                f'EMAIL:{email}\n'
+                f'ORG:{company}\n'
+                f'END:VCARD'
+            )
 
         if not content:
             messages.error(request, _('Введіть вміст для QR коду'))
@@ -269,7 +285,6 @@ def generator_view(request):
         is_admin = request.user.is_authenticated and request.user.is_admin
         has_premium_access = is_premium or is_admin
 
-        # За замовчуванням
         fg_color = '#000000'
         bg_color = '#FFFFFF'
         style = 'square'
@@ -282,7 +297,6 @@ def generator_view(request):
         is_dynamic = False
 
         if has_premium_access:
-            # Використовуємо .get() із fallback через `or`, щоб уникнути порожніх рядків
             fg_color = request.POST.get('fg_color') or '#000000'
             bg_color = request.POST.get('bg_color') or '#FFFFFF'
             style = request.POST.get('style', 'square')
@@ -308,10 +322,7 @@ def generator_view(request):
                 logo=logo,
             )
             qr_image_b64 = base64.b64encode(qr_bytes).decode('utf-8')
-            print("Успіх: Картинка згенерована!") # Допоміжне повідомлення в термінал
-            
         except Exception as e:
-            # ТЕПЕР МИ ПОБАЧИМО ПОМИЛКУ
             print(f"==== ПОМИЛКА ГЕНЕРАЦІЇ QR: {e} ====")
             messages.error(request, f'Помилка генерації коду: {e}')
             return render(request, 'qr_generator/generator.html')
