@@ -2,7 +2,7 @@ import io
 import base64
 import math
 import qrcode
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -19,9 +19,20 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
                       frame_text='', gradient='none', gradient_color='#000000',
                       logo=None, size=300):
 
+    # Надійний конвертер кольорів (захист від порожніх рядків)
     def hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        if not hex_color:
+            return (0, 0, 0)
+        hex_color = str(hex_color).lstrip('#')
+        # Якщо колір у форматі #FFF
+        if len(hex_color) == 3:
+            hex_color = ''.join([c*2 for c in hex_color])
+        if len(hex_color) != 6:
+            return (0, 0, 0)
+        try:
+            return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        except Exception:
+            return (0, 0, 0)
 
     fg_rgb = hex_to_rgb(fg_color)
     bg_rgb = hex_to_rgb(bg_color)
@@ -44,14 +55,15 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
     width = (cols + border * 2) * box_size
     height = (rows + border * 2) * box_size
 
+    # Використовуємо RGBA для підтримки прозорості
     img = Image.new('RGBA', (width, height), bg_rgb + (255,))
     draw = ImageDraw.Draw(img)
 
     # Позиції очей в координатах матриці
     eye_origins = [
-        (0, 0),           # верхній лівий
-        (0, cols - 7),    # верхній правий
-        (rows - 7, 0),    # нижній лівий
+        (0, 0),            # верхній лівий
+        (0, cols - 7),     # верхній правий
+        (rows - 7, 0),     # нижній лівий
     ]
 
     def is_eye_module(row, col):
@@ -61,10 +73,6 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         return False
 
     def draw_eye(draw, px, py, eye_style, fg_rgb, bg_rgb):
-        """
-        px, py — піксельні координати верхнього лівого кута ока
-        Око займає 7x7 модулів
-        """
         s = box_size
         outer_size = 7 * s
         inner_offset = s
@@ -73,58 +81,42 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
         core_size = 3 * s
 
         if eye_style == 'square':
-            # Зовнішній квадрат
-            draw.rectangle([px, py, px + outer_size, py + outer_size],
-                           fill=fg_rgb + (255,))
-            # Внутрішній білий
+            draw.rectangle([px, py, px + outer_size, py + outer_size], fill=fg_rgb + (255,))
             draw.rectangle([px + inner_offset, py + inner_offset,
                             px + inner_offset + inner_size,
-                            py + inner_offset + inner_size],
-                           fill=bg_rgb + (255,))
-            # Ядро
+                            py + inner_offset + inner_size], fill=bg_rgb + (255,))
             draw.rectangle([px + core_offset, py + core_offset,
                             px + core_offset + core_size,
-                            py + core_offset + core_size],
-                           fill=fg_rgb + (255,))
+                            py + core_offset + core_size], fill=fg_rgb + (255,))
 
         elif eye_style == 'rounded':
             r = s
-            draw.rounded_rectangle([px, py, px + outer_size, py + outer_size],
-                                   radius=r, fill=fg_rgb + (255,))
+            draw.rounded_rectangle([px, py, px + outer_size, py + outer_size], radius=r, fill=fg_rgb + (255,))
             draw.rounded_rectangle([px + inner_offset, py + inner_offset,
                                    px + inner_offset + inner_size,
-                                   py + inner_offset + inner_size],
-                                   radius=r // 2, fill=bg_rgb + (255,))
+                                   py + inner_offset + inner_size], radius=r // 2, fill=bg_rgb + (255,))
             draw.rounded_rectangle([px + core_offset, py + core_offset,
                                    px + core_offset + core_size,
-                                   py + core_offset + core_size],
-                                   radius=r // 2, fill=fg_rgb + (255,))
+                                   py + core_offset + core_size], radius=r // 2, fill=fg_rgb + (255,))
 
         elif eye_style == 'circle':
-            draw.ellipse([px, py, px + outer_size, py + outer_size],
-                        fill=fg_rgb + (255,))
+            draw.ellipse([px, py, px + outer_size, py + outer_size], fill=fg_rgb + (255,))
             draw.ellipse([px + inner_offset, py + inner_offset,
                          px + inner_offset + inner_size,
-                         py + inner_offset + inner_size],
-                        fill=bg_rgb + (255,))
-            draw.ellipse([px + core_offset + s // 2,
-                         py + core_offset + s // 2,
+                         py + inner_offset + inner_size], fill=bg_rgb + (255,))
+            draw.ellipse([px + core_offset + s // 2, py + core_offset + s // 2,
                          px + core_offset + core_size - s // 2,
-                         py + core_offset + core_size - s // 2],
-                        fill=fg_rgb + (255,))
+                         py + core_offset + core_size - s // 2], fill=fg_rgb + (255,))
 
         elif eye_style == 'drop':
             r = s * 2
-            draw.rounded_rectangle([px, py, px + outer_size, py + outer_size],
-                                   radius=r, fill=fg_rgb + (255,))
+            draw.rounded_rectangle([px, py, px + outer_size, py + outer_size], radius=r, fill=fg_rgb + (255,))
             draw.rounded_rectangle([px + inner_offset, py + inner_offset,
                                    px + inner_offset + inner_size,
-                                   py + inner_offset + inner_size],
-                                   radius=r // 2, fill=bg_rgb + (255,))
+                                   py + inner_offset + inner_size], radius=r // 2, fill=bg_rgb + (255,))
             draw.ellipse([px + core_offset, py + core_offset,
                          px + core_offset + core_size,
-                         py + core_offset + core_size],
-                        fill=fg_rgb + (255,))
+                         py + core_offset + core_size], fill=fg_rgb + (255,))
 
     # ─── Малюємо модулі ───────────────────────────────────
     for row_idx, row in enumerate(matrix):
@@ -139,57 +131,42 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
 
             if gradient == 'linear':
                 t = col_idx / max(cols - 1, 1)
-                color = tuple(int(fg_rgb[i] + (grad_rgb[i] - fg_rgb[i]) * t)
-                             for i in range(3)) + (255,)
+                color = tuple(int(fg_rgb[i] + (grad_rgb[i] - fg_rgb[i]) * t) for i in range(3)) + (255,)
             elif gradient == 'radial':
                 cx, cy = cols / 2, rows / 2
                 dist = ((col_idx - cx)**2 + (row_idx - cy)**2) ** 0.5
                 max_dist = (cx**2 + cy**2) ** 0.5
                 t = min(dist / max_dist, 1.0)
-                color = tuple(int(fg_rgb[i] + (grad_rgb[i] - fg_rgb[i]) * t)
-                             for i in range(3)) + (255,)
+                color = tuple(int(fg_rgb[i] + (grad_rgb[i] - fg_rgb[i]) * t) for i in range(3)) + (255,)
             else:
                 color = fg_rgb + (255,)
 
             if style == 'dots':
                 margin = 1
-                draw.ellipse([x + margin, y + margin,
-                             x + box_size - margin, y + box_size - margin],
-                            fill=color)
+                draw.ellipse([x + margin, y + margin, x + box_size - margin, y + box_size - margin], fill=color)
             elif style == 'rounded':
-                draw.rounded_rectangle([x + 1, y + 1,
-                                       x + box_size - 1, y + box_size - 1],
-                                      radius=3, fill=color)
+                draw.rounded_rectangle([x + 1, y + 1, x + box_size - 1, y + box_size - 1], radius=3, fill=color)
             elif style == 'diamonds':
-                cx = x + box_size // 2
-                cy = y + box_size // 2
+                cx, cy = x + box_size // 2, y + box_size // 2
                 half = box_size // 2 - 1
-                draw.polygon([
-                    (cx, cy - half), (cx + half, cy),
-                    (cx, cy + half), (cx - half, cy),
-                ], fill=color)
+                draw.polygon([(cx, cy - half), (cx + half, cy), (cx, cy + half), (cx - half, cy)], fill=color)
             elif style == 'stars':
-                cx = x + box_size // 2
-                cy = y + box_size // 2
+                cx, cy = x + box_size // 2, y + box_size // 2
                 r_outer = box_size // 2 - 1
                 r_inner = r_outer // 2
                 points = []
                 for i in range(10):
                     angle = math.pi / 5 * i - math.pi / 2
                     r = r_outer if i % 2 == 0 else r_inner
-                    points.append((cx + r * math.cos(angle),
-                                  cy + r * math.sin(angle)))
+                    points.append((cx + r * math.cos(angle), cy + r * math.sin(angle)))
                 draw.polygon(points, fill=color)
             elif style == 'connected':
                 draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
             else:
-                draw.rectangle([x + 1, y + 1,
-                               x + box_size - 1, y + box_size - 1],
-                              fill=color)
+                draw.rectangle([x + 1, y + 1, x + box_size - 1, y + box_size - 1], fill=color)
 
     # ─── Малюємо очі правильно ────────────────────────────
     for er, ec in eye_origins:
-        # Переводимо координати матриці в пікселі з урахуванням border
         px = (ec + border) * box_size
         py = (er + border) * box_size
         draw_eye(draw, px, py, eye_style, fg_rgb, bg_rgb)
@@ -202,46 +179,32 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
             logo_size = qr_width // 4
             logo_img = logo_img.resize((logo_size, logo_size), Image.LANCZOS)
             padding = 8
-            bg_box = Image.new('RGBA',
-                              (logo_size + padding * 2, logo_size + padding * 2),
-                              (255, 255, 255, 255))
+            bg_box = Image.new('RGBA', (logo_size + padding * 2, logo_size + padding * 2), (255, 255, 255, 255))
             lx = (qr_width - logo_size) // 2
             ly = (qr_height - logo_size) // 2
             img.paste(bg_box, (lx - padding, ly - padding), bg_box)
             img.paste(logo_img, (lx, ly), logo_img)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Помилка логотипу: {e}")
 
     # ─── Рамка ────────────────────────────────────────────
     if frame != 'none':
         frame_height = 48
-        new_img = Image.new('RGBA', (width, height + frame_height),
-                           bg_rgb + (255,))
+        new_img = Image.new('RGBA', (width, height + frame_height), bg_rgb + (255,))
         new_img.paste(img, (0, 0))
         frame_draw = ImageDraw.Draw(new_img)
 
-        if frame == 'simple':
-            frame_draw.rectangle(
-                [0, 0, width - 1, height + frame_height - 1],
-                outline=fg_rgb + (255,), width=6
-            )
-        elif frame in ('scan_me', 'scan_me_en'):
-            frame_draw.rectangle(
-                [0, 0, width - 1, height + frame_height - 1],
-                outline=fg_rgb + (255,), width=6
-            )
-            frame_draw.rectangle(
-                [0, height, width, height + frame_height],
-                fill=fg_rgb + (255,)
-            )
-            text = frame_text if frame_text else (
-                'Скануй мене' if frame == 'scan_me' else 'Scan Me'
-            )
+        if frame in ('simple', 'scan_me', 'scan_me_en'):
+            frame_draw.rectangle([0, 0, width - 1, height + frame_height - 1], outline=fg_rgb + (255,), width=6)
+            
+        if frame in ('scan_me', 'scan_me_en'):
+            frame_draw.rectangle([0, height, width, height + frame_height], fill=fg_rgb + (255,))
+            text = frame_text if frame_text else ('Скануй мене' if frame == 'scan_me' else 'Scan Me')
             try:
-                from PIL import ImageFont
                 font = ImageFont.load_default()
             except Exception:
                 font = None
+            
             bbox = frame_draw.textbbox((0, 0), text, font=font)
             tw = bbox[2] - bbox[0]
             th = bbox[3] - bbox[1]
@@ -255,7 +218,7 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
     img = img.resize((size, size), Image.LANCZOS)
 
     buffer = io.BytesIO()
-    img.convert('RGB').save(buffer, format='PNG', optimize=True)
+    img.save(buffer, format='PNG', optimize=True) # Збережено альфа-канал
     buffer.seek(0)
     return buffer.getvalue()
                         
@@ -276,6 +239,7 @@ def generator_view(request):
         is_admin = request.user.is_authenticated and request.user.is_admin
         has_premium_access = is_premium or is_admin
 
+        # За замовчуванням
         fg_color = '#000000'
         bg_color = '#FFFFFF'
         style = 'square'
@@ -288,14 +252,15 @@ def generator_view(request):
         is_dynamic = False
 
         if has_premium_access:
-            fg_color = request.POST.get('fg_color', '#000000')
-            bg_color = request.POST.get('bg_color', '#FFFFFF')
+            # Використовуємо .get() із fallback через `or`, щоб уникнути порожніх рядків
+            fg_color = request.POST.get('fg_color') or '#000000'
+            bg_color = request.POST.get('bg_color') or '#FFFFFF'
             style = request.POST.get('style', 'square')
             eye_style = request.POST.get('eye_style', 'square')
             frame = request.POST.get('frame', 'none')
             frame_text = request.POST.get('frame_text', '')
             gradient = request.POST.get('gradient', 'none')
-            gradient_color = request.POST.get('gradient_color', '#000000')
+            gradient_color = request.POST.get('gradient_color') or '#000000'
             logo = request.FILES.get('logo')
             is_dynamic = request.POST.get('is_dynamic') == 'on'
 
@@ -313,8 +278,12 @@ def generator_view(request):
                 logo=logo,
             )
             qr_image_b64 = base64.b64encode(qr_bytes).decode('utf-8')
+            print("Успіх: Картинка згенерована!") # Допоміжне повідомлення в термінал
+            
         except Exception as e:
-            messages.error(request, _('Помилка генерації QR коду'))
+            # ТЕПЕР МИ ПОБАЧИМО ПОМИЛКУ
+            print(f"==== ПОМИЛКА ГЕНЕРАЦІЇ QR: {e} ====")
+            messages.error(request, f'Помилка генерації коду: {e}')
             return render(request, 'qr_generator/generator.html')
 
         if request.user.is_authenticated:
