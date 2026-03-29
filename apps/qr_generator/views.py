@@ -47,39 +47,217 @@ def generate_qr_image(content, fg_color='#000000', bg_color='#FFFFFF',
     img = Image.new('RGBA', (width, height), bg_rgb + (255,))
     draw = ImageDraw.Draw(img)
 
+    # Позиції очей в координатах матриці
+    eye_origins = [
+        (0, 0),           # верхній лівий
+        (0, cols - 7),    # верхній правий
+        (rows - 7, 0),    # нижній лівий
+    ]
+
     def is_eye_module(row, col):
-        for er, ec in [(0, 0), (0, cols - 7), (rows - 7, 0)]:
+        for er, ec in eye_origins:
             if er <= row <= er + 6 and ec <= col <= ec + 6:
                 return True
         return False
 
-    def draw_eye(draw, x, y, style, fg_rgb, bg_rgb):
+    def draw_eye(draw, px, py, eye_style, fg_rgb, bg_rgb):
+        """
+        px, py — піксельні координати верхнього лівого кута ока
+        Око займає 7x7 модулів
+        """
         s = box_size
-        ox, oy = x, y
-        ix = ox + 2 * s
-        iy = oy + 2 * s
+        outer_size = 7 * s
+        inner_offset = s
+        inner_size = 5 * s
+        core_offset = 2 * s
+        core_size = 3 * s
 
-        if style == 'square':
-            draw.rectangle([ox, oy, ox + 7*s, oy + 7*s], fill=fg_rgb + (255,))
-            draw.rectangle([ox + s, oy + s, ox + 6*s, oy + 6*s], fill=bg_rgb + (255,))
-            draw.rectangle([ix, iy, ix + 3*s, iy + 3*s], fill=fg_rgb + (255,))
+        if eye_style == 'square':
+            # Зовнішній квадрат
+            draw.rectangle([px, py, px + outer_size, py + outer_size],
+                           fill=fg_rgb + (255,))
+            # Внутрішній білий
+            draw.rectangle([px + inner_offset, py + inner_offset,
+                            px + inner_offset + inner_size,
+                            py + inner_offset + inner_size],
+                           fill=bg_rgb + (255,))
+            # Ядро
+            draw.rectangle([px + core_offset, py + core_offset,
+                            px + core_offset + core_size,
+                            py + core_offset + core_size],
+                           fill=fg_rgb + (255,))
 
-        elif style == 'rounded':
+        elif eye_style == 'rounded':
             r = s
-            draw.rounded_rectangle([ox, oy, ox + 7*s, oy + 7*s], radius=r, fill=fg_rgb + (255,))
-            draw.rounded_rectangle([ox + s, oy + s, ox + 6*s, oy + 6*s], radius=r // 2, fill=bg_rgb + (255,))
-            draw.rounded_rectangle([ix, iy, ix + 3*s, iy + 3*s], radius=r // 2, fill=fg_rgb + (255,))
+            draw.rounded_rectangle([px, py, px + outer_size, py + outer_size],
+                                   radius=r, fill=fg_rgb + (255,))
+            draw.rounded_rectangle([px + inner_offset, py + inner_offset,
+                                   px + inner_offset + inner_size,
+                                   py + inner_offset + inner_size],
+                                   radius=r // 2, fill=bg_rgb + (255,))
+            draw.rounded_rectangle([px + core_offset, py + core_offset,
+                                   px + core_offset + core_size,
+                                   py + core_offset + core_size],
+                                   radius=r // 2, fill=fg_rgb + (255,))
 
-        elif style == 'circle':
-            draw.ellipse([ox, oy, ox + 7*s, oy + 7*s], fill=fg_rgb + (255,))
-            draw.ellipse([ox + s, oy + s, ox + 6*s, oy + 6*s], fill=bg_rgb + (255,))
-            draw.ellipse([ix + s//2, iy + s//2, ix + 2*s + s//2, iy + 2*s + s//2], fill=fg_rgb + (255,))
+        elif eye_style == 'circle':
+            draw.ellipse([px, py, px + outer_size, py + outer_size],
+                        fill=fg_rgb + (255,))
+            draw.ellipse([px + inner_offset, py + inner_offset,
+                         px + inner_offset + inner_size,
+                         py + inner_offset + inner_size],
+                        fill=bg_rgb + (255,))
+            draw.ellipse([px + core_offset + s // 2,
+                         py + core_offset + s // 2,
+                         px + core_offset + core_size - s // 2,
+                         py + core_offset + core_size - s // 2],
+                        fill=fg_rgb + (255,))
 
-        elif style == 'drop':
-            r = s
-            draw.rounded_rectangle([ox, oy, ox + 7*s, oy + 7*s], radius=r * 2, fill=fg_rgb + (255,))
-            draw.rounded_rectangle([ox + s, oy + s, ox + 6*s, oy + 6*s], radius=r, fill=bg_rgb + (255,))
-            draw.ellipse([ix, iy, ix + 3*s, iy + 3*s], fill=fg_rgb + (255,))
+        elif eye_style == 'drop':
+            r = s * 2
+            draw.rounded_rectangle([px, py, px + outer_size, py + outer_size],
+                                   radius=r, fill=fg_rgb + (255,))
+            draw.rounded_rectangle([px + inner_offset, py + inner_offset,
+                                   px + inner_offset + inner_size,
+                                   py + inner_offset + inner_size],
+                                   radius=r // 2, fill=bg_rgb + (255,))
+            draw.ellipse([px + core_offset, py + core_offset,
+                         px + core_offset + core_size,
+                         py + core_offset + core_size],
+                        fill=fg_rgb + (255,))
+
+    # ─── Малюємо модулі ───────────────────────────────────
+    for row_idx, row in enumerate(matrix):
+        for col_idx, val in enumerate(row):
+            if not val:
+                continue
+            if is_eye_module(row_idx, col_idx):
+                continue
+
+            x = (col_idx + border) * box_size
+            y = (row_idx + border) * box_size
+
+            if gradient == 'linear':
+                t = col_idx / max(cols - 1, 1)
+                color = tuple(int(fg_rgb[i] + (grad_rgb[i] - fg_rgb[i]) * t)
+                             for i in range(3)) + (255,)
+            elif gradient == 'radial':
+                cx, cy = cols / 2, rows / 2
+                dist = ((col_idx - cx)**2 + (row_idx - cy)**2) ** 0.5
+                max_dist = (cx**2 + cy**2) ** 0.5
+                t = min(dist / max_dist, 1.0)
+                color = tuple(int(fg_rgb[i] + (grad_rgb[i] - fg_rgb[i]) * t)
+                             for i in range(3)) + (255,)
+            else:
+                color = fg_rgb + (255,)
+
+            if style == 'dots':
+                margin = 1
+                draw.ellipse([x + margin, y + margin,
+                             x + box_size - margin, y + box_size - margin],
+                            fill=color)
+            elif style == 'rounded':
+                draw.rounded_rectangle([x + 1, y + 1,
+                                       x + box_size - 1, y + box_size - 1],
+                                      radius=3, fill=color)
+            elif style == 'diamonds':
+                cx = x + box_size // 2
+                cy = y + box_size // 2
+                half = box_size // 2 - 1
+                draw.polygon([
+                    (cx, cy - half), (cx + half, cy),
+                    (cx, cy + half), (cx - half, cy),
+                ], fill=color)
+            elif style == 'stars':
+                cx = x + box_size // 2
+                cy = y + box_size // 2
+                r_outer = box_size // 2 - 1
+                r_inner = r_outer // 2
+                points = []
+                for i in range(10):
+                    angle = math.pi / 5 * i - math.pi / 2
+                    r = r_outer if i % 2 == 0 else r_inner
+                    points.append((cx + r * math.cos(angle),
+                                  cy + r * math.sin(angle)))
+                draw.polygon(points, fill=color)
+            elif style == 'connected':
+                draw.rectangle([x, y, x + box_size, y + box_size], fill=color)
+            else:
+                draw.rectangle([x + 1, y + 1,
+                               x + box_size - 1, y + box_size - 1],
+                              fill=color)
+
+    # ─── Малюємо очі правильно ────────────────────────────
+    for er, ec in eye_origins:
+        # Переводимо координати матриці в пікселі з урахуванням border
+        px = (ec + border) * box_size
+        py = (er + border) * box_size
+        draw_eye(draw, px, py, eye_style, fg_rgb, bg_rgb)
+
+    # ─── Логотип ───────────────────────────────────────────
+    if logo:
+        try:
+            logo_img = Image.open(logo).convert('RGBA')
+            qr_width, qr_height = img.size
+            logo_size = qr_width // 4
+            logo_img = logo_img.resize((logo_size, logo_size), Image.LANCZOS)
+            padding = 8
+            bg_box = Image.new('RGBA',
+                              (logo_size + padding * 2, logo_size + padding * 2),
+                              (255, 255, 255, 255))
+            lx = (qr_width - logo_size) // 2
+            ly = (qr_height - logo_size) // 2
+            img.paste(bg_box, (lx - padding, ly - padding), bg_box)
+            img.paste(logo_img, (lx, ly), logo_img)
+        except Exception:
+            pass
+
+    # ─── Рамка ────────────────────────────────────────────
+    if frame != 'none':
+        frame_height = 48
+        new_img = Image.new('RGBA', (width, height + frame_height),
+                           bg_rgb + (255,))
+        new_img.paste(img, (0, 0))
+        frame_draw = ImageDraw.Draw(new_img)
+
+        if frame == 'simple':
+            frame_draw.rectangle(
+                [0, 0, width - 1, height + frame_height - 1],
+                outline=fg_rgb + (255,), width=6
+            )
+        elif frame in ('scan_me', 'scan_me_en'):
+            frame_draw.rectangle(
+                [0, 0, width - 1, height + frame_height - 1],
+                outline=fg_rgb + (255,), width=6
+            )
+            frame_draw.rectangle(
+                [0, height, width, height + frame_height],
+                fill=fg_rgb + (255,)
+            )
+            text = frame_text if frame_text else (
+                'Скануй мене' if frame == 'scan_me' else 'Scan Me'
+            )
+            try:
+                from PIL import ImageFont
+                font = ImageFont.load_default()
+            except Exception:
+                font = None
+            bbox = frame_draw.textbbox((0, 0), text, font=font)
+            tw = bbox[2] - bbox[0]
+            th = bbox[3] - bbox[1]
+            tx = (width - tw) // 2
+            ty = height + (frame_height - th) // 2
+            frame_draw.text((tx, ty), text, fill=bg_rgb + (255,), font=font)
+
+        img = new_img
+
+    # ─── Масштаб ───────────────────────────────────────────
+    img = img.resize((size, size), Image.LANCZOS)
+
+    buffer = io.BytesIO()
+    img.convert('RGB').save(buffer, format='PNG', optimize=True)
+    buffer.seek(0)
+    return buffer.getvalue()
 
     # ─── Малюємо модулі ───────────────────────────────────
     for row_idx, row in enumerate(matrix):
