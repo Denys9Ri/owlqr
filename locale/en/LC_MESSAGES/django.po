@@ -1,0 +1,42 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OwlQR 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+msgid "Генератор QR кодів"
+msgstr "QR Code Generator"
+
+msgid "Створити QR код"
+msgstr "Create QR Code"
+
+msgid "Тип QR коду"
+msgstr "QR Code Type"
+
+msgid "Текст"
+msgstr "Text"
+
+msgid "Телефон"
+msgstr "Phone"
+
+msgid "Посилання"
+msgstr "Link"
+
+msgid "Введіть текст..."
+msgstr "Enter text..."
+
+msgid "Згенерувати QR код"
+msgstr "Generate QR Code"
+
+msgid "Отримати Pro"
+msgstr "Get Pro"
+
+msgid "Завантажити PNG"
+msgstr "Download PNG"
+
+msgid "Зареєструйтесь"
+msgstr "Register"
+
+msgid "щоб зберігати QR коди"
+msgstr "to save your QR codes"
