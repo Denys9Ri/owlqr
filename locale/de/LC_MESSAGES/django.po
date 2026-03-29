@@ -1,1 +1,330 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OwlQR 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 
+msgid "Головна"
+msgstr "Startseite"
+
+msgid "Генератор QR кодів"
+msgstr "QR-Code-Generator"
+
+msgid "Генератор"
+msgstr "Generator"
+
+msgid "Ціни"
+msgstr "Preise"
+
+msgid "Про нас"
+msgstr "Über uns"
+
+msgid "Увійти"
+msgstr "Anmelden"
+
+msgid "Реєстрація"
+msgstr "Registrieren"
+
+msgid "Вийти"
+msgstr "Abmelden"
+
+msgid "Розумний генератор QR-кодів"
+msgstr "Intelligenter QR-Code-Generator"
+
+msgid "Створіть свій"
+msgstr "Erstellen Sie Ihren"
+
+msgid "QR-код"
+msgstr "QR-Code"
+
+msgid "за секунди"
+msgstr "in Sekunden"
+
+msgid "Безкоштовно для базових кодів. Преміум дизайн — для тих хто хоче виділятись."
+msgstr "Kostenlos für Basis-Codes. Premium-Design — für alle, die auffallen wollen."
+
+msgid "Створити QR код"
+msgstr "QR-Code erstellen"
+
+msgid "Можливості"
+msgstr "Funktionen"
+
+msgid "Що можна створити"
+msgstr "Was Sie erstellen können"
+
+msgid "Звичайний QR"
+msgstr "Einfacher QR"
+
+msgid "URL, текст, email, телефон"
+msgstr "URL, Text, E-Mail, Telefon"
+
+msgid "Безкоштовно"
+msgstr "Kostenlos"
+
+msgid "Кольоровий QR"
+msgstr "Farbiger QR"
+
+msgid "Власні кольори та стилі"
+msgstr "Eigene Farben und Stile"
+
+msgid "QR з логотипом"
+msgstr "QR mit Logo"
+
+msgid "Завантажте свій логотип"
+msgstr "Laden Sie Ihr Logo hoch"
+
+msgid "Динамічний QR"
+msgstr "Dynamischer QR"
+
+msgid "Змінюйте посилання без нового QR"
+msgstr "Link ohne neuen QR ändern"
+
+msgid "Тарифи"
+msgstr "Preise"
+
+msgid "Оберіть свій план"
+msgstr "Wählen Sie Ihren Plan"
+
+msgid "Починайте безкоштовно. Переходьте на Pro коли будете готові."
+msgstr "Starten Sie kostenlos. Wechseln Sie zu Pro, wenn Sie bereit sind."
+
+msgid "назавжди"
+msgstr "für immer"
+
+msgid "Базовий QR код"
+msgstr "Basis-QR-Code"
+
+msgid "PNG завантаження"
+msgstr "PNG-Download"
+
+msgid "Кольори та логотип"
+msgstr "Farben und Logo"
+
+msgid "Статистика сканувань"
+msgstr "Scan-Statistiken"
+
+msgid "Почати безкоштовно"
+msgstr "Kostenlos starten"
+
+msgid "Все з Free"
+msgstr "Alles aus Free"
+
+msgid "Кольори + логотип"
+msgstr "Farben + Logo"
+
+msgid "SVG та PNG експорт"
+msgstr "SVG und PNG Export"
+
+msgid "Спробувати Pro"
+msgstr "Pro testen"
+
+msgid "Популярний"
+msgstr "Beliebt"
+
+msgid "на місяць"
+msgstr "pro Monat"
+
+msgid "Тип QR коду"
+msgstr "QR-Code-Typ"
+
+msgid "Посилання"
+msgstr "Link"
+
+msgid "Текст"
+msgstr "Text"
+
+msgid "Введіть текст..."
+msgstr "Text eingeben..."
+
+msgid "Телефон"
+msgstr "Telefon"
+
+msgid "Назва мережі (SSID)"
+msgstr "Netzwerkname (SSID)"
+
+msgid "Пароль"
+msgstr "Passwort"
+
+msgid "Шифрування"
+msgstr "Verschlüsselung"
+
+msgid "Без пароля"
+msgstr "Kein Passwort"
+
+msgid "Ім'я"
+msgstr "Name"
+
+msgid "Компанія"
+msgstr "Unternehmen"
+
+msgid "Преміум налаштування"
+msgstr "Premium-Einstellungen"
+
+msgid "Кольори"
+msgstr "Farben"
+
+msgid "Колір QR"
+msgstr "QR-Farbe"
+
+msgid "Колір фону"
+msgstr "Hintergrundfarbe"
+
+msgid "Стиль модулів"
+msgstr "Modulstil"
+
+msgid "Квадрат"
+msgstr "Quadrat"
+
+msgid "Округлий"
+msgstr "Abgerundet"
+
+msgid "Крапки"
+msgstr "Punkte"
+
+msgid "Діаманти"
+msgstr "Diamanten"
+
+msgid "Зірки"
+msgstr "Sterne"
+
+msgid "З'єднані"
+msgstr "Verbunden"
+
+msgid "Стиль очей"
+msgstr "Augenstil"
+
+msgid "Округлі"
+msgstr "Abgerundet"
+
+msgid "Кола"
+msgstr "Kreise"
+
+msgid "Краплі"
+msgstr "Tropfen"
+
+msgid "Градієнт"
+msgstr "Farbverlauf"
+
+msgid "Без"
+msgstr "Ohne"
+
+msgid "Лінійний"
+msgstr "Linear"
+
+msgid "Радіальний"
+msgstr "Radial"
+
+msgid "Другий колір градієнту"
+msgstr "Zweite Verlaufsfarbe"
+
+msgid "Рамка"
+msgstr "Rahmen"
+
+msgid "Без рамки"
+msgstr "Kein Rahmen"
+
+msgid "Проста"
+msgstr "Einfach"
+
+msgid "Скануй мене"
+msgstr "Scanne mich"
+
+msgid "Логотип (PNG, JPG, макс. 2МБ)"
+msgstr "Logo (PNG, JPG, max. 2MB)"
+
+msgid "Динамічний QR (можна змінювати посилання)"
+msgstr "Dynamischer QR (Link änderbar)"
+
+msgid "Кольори, стилі, логотип та динамічний QR доступні в Pro"
+msgstr "Farben, Stile, Logo und dynamischer QR in Pro verfügbar"
+
+msgid "Отримати Pro"
+msgstr "Pro erhalten"
+
+msgid "Згенерувати QR код"
+msgstr "QR-Code generieren"
+
+msgid "Тут з'явиться ваш QR код"
+msgstr "Hier erscheint Ihr QR-Code"
+
+msgid "Завантажити PNG"
+msgstr "PNG herunterladen"
+
+msgid "Завантажити PNG (висока якість)"
+msgstr "PNG herunterladen (hohe Qualität)"
+
+msgid "Зареєструйтесь"
+msgstr "Registrieren"
+
+msgid "щоб зберігати QR коди"
+msgstr "um QR-Codes zu speichern"
+
+msgid "Вхід в акаунт"
+msgstr "Anmelden"
+
+msgid "Ще немає акаунту?"
+msgstr "Noch kein Konto?"
+
+msgid "Зареєструватись"
+msgstr "Registrieren"
+
+msgid "Увійти через Google"
+msgstr "Mit Google anmelden"
+
+msgid "або"
+msgstr "oder"
+
+msgid "Створити акаунт"
+msgstr "Konto erstellen"
+
+msgid "Вже є акаунт?"
+msgstr "Bereits ein Konto?"
+
+msgid "Зареєструватись через Google"
+msgstr "Mit Google registrieren"
+
+msgid "Ласкаво просимо до OwlQR!"
+msgstr "Willkommen bei OwlQR!"
+
+msgid "Умови використання"
+msgstr "Nutzungsbedingungen"
+
+msgid "Конфіденційність"
+msgstr "Datenschutz"
+
+msgid "Політика конфіденційності"
+msgstr "Datenschutzrichtlinie"
+
+msgid "Про проект"
+msgstr "Über das Projekt"
+
+msgid "Про OwlQR"
+msgstr "Über OwlQR"
+
+msgid "Розумно"
+msgstr "Intelligent"
+
+msgid "Швидко"
+msgstr "Schnell"
+
+msgid "Глобально"
+msgstr "Global"
+
+msgid "Готові спробувати?"
+msgstr "Bereit zum Ausprobieren?"
+
+msgid "Мої QR коди"
+msgstr "Meine QR-Codes"
+
+msgid "Кабінет"
+msgstr "Dashboard"
+
+msgid "Новий QR"
+msgstr "Neuer QR"
+
+msgid "QR код видалено"
+msgstr "QR-Code gelöscht"
+
+msgid "Розумний генератор QR-кодів"
+msgstr "Intelligenter QR-Code-Generator"
