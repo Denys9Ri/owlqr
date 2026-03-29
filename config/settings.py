@@ -20,6 +20,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # ОБОВ'ЯЗКОВО ДЛЯ ALLAUTH
+    'django.contrib.sites', 
 
     # Мультимова
     'django.contrib.humanize',
@@ -29,11 +32,19 @@ INSTALLED_APPS = [
     'apps.qr_generator',
     'apps.accounts',
     'apps.payments',
+    
+    # ALLAUTH (ВХІД ЧЕРЕЗ GOOGLE)
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # статика на Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # статика на Render/Coolify
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',  # мультимова
     'django.middleware.common.CommonMiddleware',
@@ -41,6 +52,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Мідлвар для Allauth
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -72,7 +86,7 @@ DATABASES = {
     }
 }
 
-# Пізніше для Render замінимо на PostgreSQL через DATABASE_URL
+# Пізніше замінимо на PostgreSQL через DATABASE_URL
 
 # Паролі
 AUTH_PASSWORD_VALIDATORS = [
@@ -84,6 +98,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Кастомний юзер
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# Налаштування авторизації для Allauth
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Мультимова
 LANGUAGE_CODE = 'uk'
@@ -120,9 +140,31 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+# Налаштування Allauth (email обов'язковий)
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
 # Google OAuth
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 # PayPal
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', '')
