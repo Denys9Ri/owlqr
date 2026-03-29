@@ -5,8 +5,6 @@ app_name = 'payments'
 
 urlpatterns = [
     path('', views.pricing_view, name='pricing'),
-    path('order/<int:plan_id>/', views.create_order_view, name='create_order'),
-    path('success/<int:plan_id>/', views.payment_success_view, name='success'),
-    path('cancel/', views.payment_cancel_view, name='cancel'),
+    path('paypal-success/', views.paypal_success_view, name='paypal_success'),
     path('cancel-subscription/', views.cancel_subscription_view, name='cancel_subscription'),
 ]
