@@ -5,7 +5,6 @@
 
 {% block content %}
 <div class="section section-center">
-
   <div class="section-eyebrow">{% trans "Тарифи" %}</div>
   <h1 class="section-title">{% trans "Оберіть свій план" %}</h1>
   <p class="section-sub mb-32">
@@ -13,8 +12,6 @@
   </p>
 
   <div class="pricing-grid">
-
-    <!-- FREE -->
     <div class="plan-card">
       <div class="plan-tier">Free</div>
       <div class="plan-price">$<sup></sup>0</div>
@@ -34,7 +31,6 @@
       </a>
     </div>
 
-    <!-- PRO -->
     {% for plan in plans %}
     <div class="plan-card featured">
       <div class="plan-badge">{% trans "Популярний" %}</div>
@@ -64,10 +60,19 @@
             ✓ {% trans "Активний план" %}
           </button>
         {% else %}
-          <a href="{% url 'payments:create_order' plan.id %}"
-             class="btn btn-gold btn-full">
-            {% trans "Обрати план" %}
-          </a>
+          
+          <div id="paypal-container-{{ plan.id }}" style="margin-top: 16px;"></div>
+          
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                renderPayPalButton(
+                    '#paypal-container-{{ plan.id }}', 
+                    'P-ТВІЙ_PAYPAL_PLAN_ID', // <--- ВСТАВ СВІЙ PAYPAL PLAN ID ТУТ!
+                    {{ plan.id }}
+                );
+            });
+          </script>
+
         {% endif %}
       {% else %}
         <a href="{% url 'accounts:register' %}" class="btn btn-gold btn-full">
@@ -75,48 +80,46 @@
         </a>
       {% endif %}
     </div>
-    {% empty %}
-    <div class="plan-card featured">
-      <div class="plan-badge">{% trans "Популярний" %}</div>
-      <div class="plan-tier">Pro</div>
-      <div class="plan-price"><sup>$</sup>9</div>
-      <div class="plan-period">{% trans "на місяць" %}</div>
-      <ul class="plan-features">
-        <li>{% trans "Все з Free" %}</li>
-        <li>{% trans "Кольори та стилі QR" %}</li>
-        <li>{% trans "Логотип у QR коді" %}</li>
-        <li>{% trans "SVG та PNG експорт" %}</li>
-        <li>{% trans "Динамічний QR" %}</li>
-        <li>{% trans "Статистика сканувань" %}</li>
-      </ul>
-      <a href="{% url 'accounts:register' %}" class="btn btn-gold btn-full">
-        {% trans "Зареєструватись" %}
-      </a>
-    </div>
     {% endfor %}
-
   </div>
-
-  <!-- FAQ -->
-  <div style="max-width: 560px; margin: 64px auto 0; text-align: left;">
-    <h2 class="section-title text-center" style="margin-bottom: 32px;">
-      {% trans "Часті питання" %}
-    </h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <h3 class="faq-q">{% trans "Чи справді безкоштовний план безкоштовний?" %}</h3>
-        <p class="faq-a">{% trans "Так. Базовий QR код — безкоштовно назавжди, без кредитної картки." %}</p>
-      </div>
-      <div class="faq-item">
-        <h3 class="faq-q">{% trans "Що таке динамічний QR?" %}</h3>
-        <p class="faq-a">{% trans "Динамічний QR дозволяє змінювати посилання куди він веде без перегенерації коду." %}</p>
-      </div>
-      <div class="faq-item">
-        <h3 class="faq-q">{% trans "Як скасувати підписку?" %}</h3>
-        <p class="faq-a">{% trans "В будь-який момент через ваш профіль. Доступ зберігається до кінця оплаченого періоду." %}</p>
-      </div>
-    </div>
-  </div>
-
 </div>
+
+{% if user.is_authenticated and not user.is_premium %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&vault=true&intent=subscription"></script>
+<script>
+  function renderPayPalButton(containerId, paypalPlanId, djangoPlanId) {
+      paypal.Buttons({
+          style: { shape: 'rect', color: 'gold', layout: 'horizontal', label: 'subscribe' },
+          
+          createSubscription: function(data, actions) {
+            return actions.subscription.create({
+              'plan_id': paypalPlanId
+            });
+          },
+          
+          onApprove: function(data, actions) {
+              // Відправляємо успішний статус у наш views.py
+              fetch("{% url 'payments:paypal_success' %}", {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                      subscription_id: data.subscriptionID,
+                      plan_id: djangoPlanId
+                  })
+              }).then(res => res.json()).then(result => {
+                  if (result.status === 'success') {
+                      window.location.href = "{% url 'qr_generator:generator' %}";
+                  } else {
+                      alert("Сталась помилка при активації: " + result.message);
+                  }
+              });
+          }
+      }).render(containerId);
+  }
+</script>
+{% endif %}
+
 {% endblock %}
